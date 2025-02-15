@@ -43,7 +43,7 @@
         }
 
         .input {
-            font-family: "IBM Plex Sans", sans-serif;
+            font-family: "Futura", Futura, serif;
             width: 100%;
             padding: 15px;
             border: none;
@@ -58,6 +58,7 @@
 
         .input::placeholder {
             color: rgba(255, 255, 255, 0.7);
+            font-family: "Futura", Futura, serif;
         }
 
         .input:hover {
@@ -69,8 +70,10 @@
             margin-top: 20px;
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 20px; /* Increased gap for bigger bookmarks */
             flex-wrap: wrap;
+            opacity: 0;
+            animation: enterBookmarks 1s forwards 0.5s; /* Adding animation for fade-in */
         }
 
         .bookmark {
@@ -81,10 +84,10 @@
             color: white;
             backdrop-filter: blur(10px);
             background: rgba(255, 255, 255, 0.2);
-            padding: 10px;
+            padding: 15px; /* Increased padding for bigger bookmarks */
             border-radius: 15px;
-            width: 90px;
-            height: 90px;
+            width: 120px; /* Increased size of the bookmark */
+            height: 120px; /* Increased size of the bookmark */
             text-align: center;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
@@ -99,7 +102,7 @@
         .bookmark span {
             max-width: 100%;
             height: auto;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             margin-top: 5px;
         }
 
@@ -132,7 +135,7 @@
             color: white;
             border-radius: 15px;
             cursor: pointer;
-            font-family: "IBM Plex Sans", sans-serif;
+            font-family: "Futura", Futura, serif; /* Set to Futura */
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             transition: background 0.3s ease, transform 0.3s ease;
         }
@@ -140,6 +143,12 @@
         .menu-button:hover {
             background: rgba(255, 255, 255, 0.3);
             transform: scale(1.1);
+        }
+
+        @keyframes enterBookmarks {
+            to {
+                opacity: 1;
+            }
         }
     </style>
 </head>
@@ -160,19 +169,19 @@
 
     <div class="bookmarks" id="bookmarks">
         <a href="#" class="bookmark" data-url="https://www.youtube.com">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" alt="YouTube" style="height: 40px; width: auto;">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" alt="YouTube" style="height: 60px; width: auto;">
             <span>YouTube</span>
         </a>
         <a href="#" class="bookmark" data-url="https://twitter.com">
-            <img src="https://cdn.freebiesupply.com/logos/large/2x/twitter-3-logo-png-transparent.png" alt="Twitter" style="height: 40px; width: auto;">
+            <img src="https://cdn.freebiesupply.com/logos/large/2x/twitter-3-logo-png-transparent.png" alt="Twitter" style="height: 60px; width: auto;">
             <span>Twitter</span>
         </a>
         <a href="#" class="bookmark" data-url="https://discord.com">
-            <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png" alt="Discord" style="height: 40px; width: auto;">
+            <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png" alt="Discord" style="height: 60px; width: auto;">
             <span>Discord</span>
         </a>
         <a href="#" class="bookmark" data-url="https://www.nvidia.com/en-us/geforce-now/">
-            <img src="https://www.nesabamedia.com/wp-content/uploads/2022/06/GeForce-NOW-Logo-1.png" alt="GeForce Now" style="height: 40px; width: auto;">
+            <img src="https://www.nesabamedia.com/wp-content/uploads/2022/06/GeForce-NOW-Logo-1.png" alt="GeForce Now" style="height: 60px; width: auto;">
             <span>GeForce Now</span>
         </a>
     </div>
@@ -184,22 +193,38 @@
     <script src="./assets/register-sw.js"></script>
 
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const input = document.querySelector(".input");
+            input.addEventListener("keydown", handleInput);
+
+            function handleInput(e) {
+                // We only want the function to run if the key pressed is the Enter key
+                if (e.key !== 'Enter') return;
+
+                // Run the formatSearch function on the current value of the input
+                const query = formatSearch(input.value);
+
+                // Redirect to [uv prefix] + [encoded search query]
+                window.location.href = __uv$config.prefix + __uv$config.encodeUrl(query);
+            }
+
+            // Handle bookmark click events to simulate input action
+            document.querySelectorAll('.bookmark').forEach(bookmark => {
+                bookmark.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const url = this.querySelector('a').getAttribute('href'); // Get the actual URL
+                    input.value = url; // Set input to the URL
+                    handleInput({ key: 'Enter' }); // Trigger the search behavior directly
+                });
+            });
+        });
+
         function updateTime() {
             const now = new Date();
             document.getElementById('time-date').textContent = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
         }
         setInterval(updateTime, 1000);
         updateTime();
-
-        document.querySelectorAll('.bookmark').forEach(bookmark => {
-            bookmark.addEventListener('click', function(event) {
-                event.preventDefault();
-                const url = this.getAttribute('data-url');
-                const inputField = document.querySelector('.input');
-                inputField.value = url;
-                inputField.dispatchEvent(new KeyboardEvent('keypress', { key: 'Enter' }));
-            });
-        });
     </script>
 </body>
 </html>
