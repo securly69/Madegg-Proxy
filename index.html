@@ -6,14 +6,10 @@
   <title>MadEgg Proxy</title>
   <link rel="icon" type="image/x-icon" href="https://ih1.redbubble.net/image.510166760.1101/st,small,507x507-pad,600x600,f8f8f8.u1.jpg">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    /* Global Reset */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: "Futura", Futura, serif;
+      font-family: "Futura", sans-serif;
       background: url('https://cdn.dribbble.com/users/234525/screenshots/5853076/eggsacrosstheuniverse.jpg') no-repeat center center fixed;
       background-size: cover;
       height: 100vh;
@@ -25,469 +21,69 @@
       overflow: hidden;
       padding: 10px;
     }
-
-    /* Header Styling */
     h1 {
-      font-family: "Futura", Futura, serif;
       font-size: 2.2rem;
       margin-bottom: 20px;
-      text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+      text-shadow: 0 0 10px rgba(0,0,0,0.8);
       text-align: center;
       transition: transform 0.3s ease;
     }
-
-    h1:hover {
-      transform: scale(1.1);
-    }
-
+    h1:hover { transform: scale(1.1); }
     .time-date {
-      font-family: "Futura", Futura, serif;
       font-size: 1.2rem;
       margin-bottom: 20px;
-      text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+      text-shadow: 0 0 10px rgba(0,0,0,0.8);
       transition: transform 0.3s ease;
     }
-
-    .time-date:hover {
-      transform: scale(1.1);
-    }
-
+    .time-date:hover { transform: scale(1.1); }
     .search-container {
       width: 80%;
       max-width: 600px;
       text-align: center;
       margin-bottom: 20px;
     }
-
     .input {
-      font-family: "Futura", Futura, serif;
       width: 100%;
-      padding: 20px; /* Increased padding to make the search bar thicker */
+      padding: 20px;
       border: none;
       border-radius: 20px;
       font-size: 1rem;
       backdrop-filter: blur(10px);
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255,255,255,0.2);
       color: white;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
       transition: background 0.3s ease, box-shadow 0.3s ease;
     }
-
-    .input::placeholder {
-      color: rgba(255, 255, 255, 0.7);
-      font-family: "Futura", Futura, serif;
-    }
-
+    .input::placeholder { color: rgba(255,255,255,0.7); }
     .input:hover {
-      background: rgba(255, 255, 255, 0.3);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+      background: rgba(255,255,255,0.3);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
     }
-
-    .bookmarks {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
-      opacity: 0;
-      animation: enterBookmarks 1s forwards 0.5s;
-      width: 100%;
-      max-width: 800px; /* Adjusted width to control max container size */
-      text-align: center;
-      position: relative;
-    }
-
-    .bookmark {
-      margin-bottom: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-decoration: none;
-      color: white;
-      background: rgba(255, 255, 255, 0.2);
-      padding: 10px;
-      border-radius: 15px;
-      width: 120px;
-      height: 120px;
-      text-align: center;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-      transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
-      backdrop-filter: blur(10px); /* Added blur to each bookmark */
-    }
-
-    .bookmark img {
-      margin: auto;
-      height: 40px;
-      width: auto;
-      transition: transform 0.3s ease;
-    }
-
-    .bookmark span {
-      font-size: 0.9rem;
-      margin: auto;
-    }
-
-    .bookmark:hover {
-      transform: scale(1.05);
-      background: rgba(255, 255, 255, 0.3);
-    }
-
-    .bookmark img:hover {
-      transform: rotate(10deg) scale(1.1);
-    }
-
-    /* The “Add Bookmark” button styled as a bookmark item */
-    .add-bookmark {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 10px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 15px;
-      cursor: pointer;
-      font-family: "Futura", Futura, serif;
-      font-size: 1rem;
-      color: white;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-      transition: background 0.3s ease, transform 0.3s ease;
-      width: 120px;
-      height: 120px;
-    }
-
-    .add-bookmark:hover {
-      background: rgba(255, 255, 255, 0.3);
-      transform: scale(1.1);
-    }
-
-    .add-bookmark-modal {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      padding: 20px;
-      background: rgba(0, 0, 0, 0.8);
-      border-radius: 15px;
-      color: white;
-      display: none;
-      flex-direction: column;
-      gap: 10px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-    }
-
-    .add-bookmark-modal input {
-      padding: 10px;
-      border-radius: 5px;
-      border: none;
-      width: 100%;
-    }
-
-    .add-bookmark-modal button {
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      background: #5192f5;
-      color: white;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    .add-bookmark-modal button:hover {
-      background: #3e81e6;
-    }
-        
-    .top-right-menu, .top-left-menu {
-      position: absolute;
-      top: 10px;
-    }
-
-    .top-right-menu {
-      right: 10px;
-    }
-
-    .top-left-menu {
-      left: 10px;
-    }
-
-    .menu-button {
-      padding: 15px;
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      border-radius: 25px;
-      cursor: pointer;
-      font-family: "Futura", Futura, serif;
-      font-size: 1.1rem;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-      transition: background 0.3s ease, transform 0.3s ease;
-    }
-
-    .menu-button:hover {
-      background: rgba(255, 255, 255, 0.3);
-      transform: scale(1.1);
-    }
-
-    /* Rotating typewriter text underneath the bookmarks */
-    .rotating-text {
-      font-family: "Futura", Futura, serif;
-      font-size: 1.5rem;
-      color: white;
-      text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
-      margin-top: 20px;
-      min-height: 2em; /* Reserve vertical space */
-    }
-
-    @keyframes enterBookmarks {
-      to {
-        opacity: 1;
-        backdrop-filter: blur(1px);
-      }
-    }
+    /* Additional UI elements (bookmarks, rotating text, etc.) can be added here */
   </style>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 </head>
 <body>
   <h1>MadEgg Proxy</h1>
-  <div class="top-right-menu">
-    <button class="menu-button" onclick="SHS()">Search History Spammer</button>
-  </div>
-  
-  <div class="top-left-menu">
-    <button class="menu-button" onclick="AB()">About:blank Cloaker</button>
-  </div>
-  
   <div class="time-date" id="time-date"></div>
-
   <div class="search-container">
     <input type="text" class="input" placeholder="Enter a search query or URL">
   </div>
-
-  <!-- Bookmarks container now includes the add-bookmark element -->
-  <div class="bookmarks" id="bookmarks">
-    <a href="javascript:void(0)" class="bookmark" onclick="navigateBookmark('https://www.youtube.com')">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" alt="YouTube">
-      <span>YouTube</span>
-    </a>
-    <a href="javascript:void(0)" class="bookmark" onclick="navigateBookmark('https://twitter.com')">
-      <img src="https://cdn.freebiesupply.com/logos/large/2x/twitter-3-logo-png-transparent.png" alt="Twitter">
-      <span>Twitter</span>
-    </a>
-    <a href="javascript:void(0)" class="bookmark" onclick="navigateBookmark('https://discord.com')">
-      <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png" alt="Discord">
-      <span>Discord</span>
-    </a>
-    <a href="javascript:void(0)" class="bookmark" onclick="navigateBookmark('https://www.nvidia.com/en-us/geforce-now/')">
-      <img src="https://www.nesabamedia.com/wp-content/uploads/2022/06/GeForce-NOW-Logo-1.png" alt="GeForce Now">
-      <span>GeForce Now</span>
-    </a>
-    <!-- Add Bookmark button appears as another bookmark item -->
-    <div class="add-bookmark" id="add-bookmark">+ Add Bookmark</div>
-  </div>
-
-  <!-- Rotating typewriter text underneath the bookmarks -->
-  <div class="rotating-text" id="rotating-text"></div>
-
-  <div class="add-bookmark-modal" id="add-bookmark-modal">
-    <input type="text" id="bookmark-name" placeholder="Bookmark Name">
-    <input type="text" id="bookmark-url" placeholder="Bookmark URL">
-    <button id="save-bookmark">Save</button>
-  </div>
-
-  <!-- Including the scripts -->
+  <!-- The UI may include bookmarks or additional content here -->
+  <!-- Include the UI script -->
   <script src="./assets/script.js" defer></script>
-  <script src="./uv/uv.bundle.js"></script>
-  <script src="./uv/uv.config.js"></script>
-  <script src="./assets/register-sw.js"></script>
-
   <script>
-    // Time and Date Function
+    // Simple time-date updater.
     function updateTimeDate() {
       const date = new Date();
-      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-      document.getElementById('time-date').textContent = date.toLocaleDateString('en-US', options).replace(' at', ',');
+      const options = {
+        weekday: 'long', year: 'numeric', month: 'long',
+        day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'
+      };
+      document.getElementById('time-date').textContent =
+        date.toLocaleDateString('en-US', options).replace(' at', ',');
     }
     setInterval(updateTimeDate, 1000);
     updateTimeDate();
-
-    // Navigate to the bookmark using the proxy’s URL encoding
-    function navigateBookmark(url) {
-      window.location.href = __uv$config.prefix + __uv$config.encodeUrl(url);
-    }
-
-    // Add bookmark functionality
-    const addBookmarkButton = document.getElementById('add-bookmark');
-    const addBookmarkModal = document.getElementById('add-bookmark-modal');
-    const saveBookmarkButton = document.getElementById('save-bookmark');
-    const bookmarksContainer = document.getElementById('bookmarks');
-
-    addBookmarkButton.addEventListener('click', () => {
-      addBookmarkModal.style.display = 'flex';
-    });
-
-    saveBookmarkButton.addEventListener('click', () => {
-  const name = document.getElementById('bookmark-name').value;
-  const url = document.getElementById('bookmark-url').value;
-
-  if (name && url) {
-    const link = document.createElement('a');
-    link.href = '#'; // placeholder; navigation is handled via click event
-    link.className = 'bookmark';
-
-    const img = document.createElement('img');
-    img.src = `https://www.google.com/s2/favicons?sz=64&domain_url=${encodeURIComponent(url)}`;
-    img.alt = name;
-    link.appendChild(img);
-
-    const span = document.createElement('span');
-    span.textContent = name;
-    link.appendChild(span);
-
-    // Use the navigateBookmark function on click
-    link.addEventListener('click', () => {
-      navigateBookmark(url);
-    });
-
-    // Insert the new bookmark before the "Add Bookmark" button
-    bookmarksContainer.insertBefore(link, addBookmarkButton);
-
-    addBookmarkModal.style.display = 'none';
-  }
-});
-
-
-    // -------------------------------
-    // Typewriter Effect for Rotating Text
-    // -------------------------------
-    const rotatingText = document.getElementById('rotating-text');
-    // Set up an array of messages. One message is initially a placeholder for the IP.
-    const messages = [
-  "Your phone's at 1%. Find a charger ASAP.",
-  "Still waiting for a reply? Classic.",
-  "Check your phone again. Yep, still no new texts.",
-  "You texted them, they didn't reply. Story of our lives.",
-  "Refresh again. It’s not gonna change, but okay.",
-  "The Wi-Fi's slow. We’re both suffering.",
-  "You’re staring at your screen like it’ll fix itself.",
-  "They still haven’t replied. Maybe they forgot you exist.",
-  "You’ve read that message 10 times. Nothing changed.",
-  "You’re refreshing... again. It’s fine, we all do it.",
-  "You’ve sent 5 texts and got 1 reply. That’s... something.",
-  "That ‘seen’ notification feels like a punch in the gut.",
-  "Your phone’s dying. Make it count.",
-  "Oh, so it’s an ad, not a text. Great.",
-  "You’re waiting for a reply. It’s fine, totally fine.",
-  "They’ll reply. Or they won’t. Who knows?",
-  "Are you refreshing for new messages or just... out of habit?",
-  "If this was an Olympic sport, you'd have a gold in refreshing.",
-  "You’ve checked your phone 5 times in the last 3 minutes. Still nothing?",
-  "You sent ‘hey’ again? Bold move.",
-  "Your phone’s about to die. Good luck with that.",
-  "I know you’re waiting for a reply, but it’s not here yet.",
-  "They read your message, didn’t reply. Ouch.",
-  "You’ve been waiting long enough. Send another ‘hey’.",
-  "You checked your phone again. Did you really think it changed?",
-  "That moment when your phone buzzes, but it’s just an app update.",
-  "Your phone’s at 2%. This is getting real.",
-  "You’ve been texting for an hour and... nothing.",
-  "Wi-Fi’s down again. This is torture.",
-  "You texted them and they replied with ‘k’. Yeah, that stings.",
-  "Every time you check, you’re just reminding yourself they haven’t replied.",
-  "Your phone's dead, your charger’s nowhere. This is it.",
-  "Your battery’s at 2%. This is the final countdown.",
-  "You’re still here, hoping for a reply that might never come.",
-  "Your phone’s not gonna charge faster if you keep staring at it.",
-  "They’ll reply. Eventually. Maybe. Hopefully.",
-  "Your Wi-Fi’s slower than your patience right now.",
-  "You’ve refreshed 10 times. It’s time to accept defeat.",
-  "Is it bad that we’re both just waiting for a reply?",
-  "You’ve been waiting for 10 minutes. Send the next message.",
-  "That little typing bubble is your only hope right now.",
-  "Refresh again. It’s still not going to change.",
-  "Is it time for another ‘hey’? I think it might be.",
-  "Your phone’s about to die. This might be your last text.",
-  "You’ve been waiting for 5 minutes. Are they even alive?",
-  "Your phone's dead, but you’re still checking for texts. Why?",
-  "The pizza’s here, but the remote’s missing.",
-  "You’ve been searching for your keys for 20 minutes. Classic.",
-  "That awkward moment when you forget how to tie your shoes.",
-  "You just dropped your phone. Is it cracked? Please no.",
-  "You’ve lost your charger, but found 3 socks that don’t match.",
-  "That moment when you walk into a room and forget why.",
-  "You said you'd go to bed early, but here we are at 3 AM.",
-  "Your homework's not done. Oops.",
-  "You’re almost out of snacks. Time to panic.",
-  "You stared at the microwave like it’s going to speed up the process.",
-  "You’ve been on the same level of a game for hours. It’s time to quit.",
-  "You’ve got a million things to do, but here you are reading this.",
-  "You’re scrolling, but nothing new is happening. Classic boredom.",
-  "You keep opening the fridge like new food will appear.",
-  "You thought you had a spoon, but it’s just a fork. Tragic.",
-  "You’ve lost the TV remote again. Someone’s hiding it from you.",
-  "You’ve rechecked the fridge twice. Still nothing interesting.",
-  "That awkward silence when you’re both just staring at your phones.",
-  "It’s 2 AM. You’re still awake. What happened to your sleep schedule?",
-  "You’re holding your phone like it’s going to magically find your charger.",
-  "You’ve checked the time. You’re still late.",
-  "You can’t find your headphones, but you know they’re somewhere.",
-  "That feeling when you just want to nap but can’t fall asleep.",
-  "You’re ready to go, but you can’t find your jacket. Always the jacket.",
-  
-  // Shower Thoughts
-  "If two wrongs don’t make a right, what do two rights make?",
-  "Does anyone else also stare at the microwave waiting for it to finish like it’s going to change anything?",
-  "Why do we say ‘sleep like a baby’ when babies wake up every two hours?",
-  "Isn’t it weird that we wash our hands after touching things that are already clean?",
-  "If you think about it, every time you’re on your phone, you’re holding an advanced piece of technology in your hand, but you use it to scroll through memes.",
-  "Why do we call it a ‘building’ when it’s already built?",
-  "If a word is misspelled in the dictionary, how would we ever know?",
-  "If you die in your dreams, do you die in real life?",
-  "Why is it called ‘rush hour’ when nothing is moving?",
-  "If you try to fail and succeed, which have you done?",
-  "If a tree falls in a forest and no one is around, does it make a sound? Or does it just quietly realize it’s the loneliest tree in the forest?",
-  "We spend our entire lives looking for the meaning of life, but then forget we’re just supposed to live it.",
-  "If you really think about it, everything is kind of a coincidence.",
-  "Is it just me, or is it harder to get up in the morning when you know you have to do something important?",
-  "What’s the point of making a cup of tea if you don’t drink it in the next 5 minutes before it gets cold?",
-  "Why do we always tell ourselves ‘just one more minute’ when we know we’re going to be late?",
-  "If we’re all just made of atoms, does that mean we’re all just tiny pieces of the universe having a very weird time?",
-  "You know you’re an adult when ‘getting a full night’s sleep’ becomes your idea of fun.",
-  "Have you ever wondered if your dog thinks you’re their dog?",
-  "If you don’t eat pizza for a few weeks, do you get a ‘pizza withdrawal’?",
-  "Why do we look at the weather forecast when we’re already outside? Like, does the weather care about your opinion?",
-  "If humans could communicate with animals, would they even want to?",
-  "If we’re all made of stardust, does that mean we’re all just glowing in the dark at a cosmic party?",
-  "Why do we call it ‘taking a shower’? Shouldn’t we call it ‘giving a shower’ to ourselves?",
-  "How is it that we only notice how tired we are once we sit down? Like our body is waiting for the perfect moment to announce its exhaustion."
-];
-
-    let currentMessageIndex = 0;
-    let currentCharIndex = 0;
-    let isDeleting = false;
-    const typingSpeed = 100; // ms per character
-    const pauseBetween = 2000; // pause at end of each message
-
-    function type() {
-      let currentMessage = messages[currentMessageIndex];
-      if (isDeleting) {
-        rotatingText.textContent = currentMessage.substring(0, currentCharIndex--);
-        if (currentCharIndex < 0) {
-          isDeleting = false;
-          currentMessageIndex = (currentMessageIndex + 1) % messages.length;
-          setTimeout(type, 500);
-        } else {
-          setTimeout(type, typingSpeed / 2);
-        }
-      } else {
-        rotatingText.textContent = currentMessage.substring(0, currentCharIndex++);
-        if (currentCharIndex > currentMessage.length) {
-          setTimeout(() => {
-            isDeleting = true;
-            setTimeout(type, typingSpeed / 2);
-          }, pauseBetween);
-        } else {
-          setTimeout(type, typingSpeed);
-        }
-      }
-    }
-    type();
   </script>
 </body>
 </html>
