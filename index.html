@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=0.8"> <!-- Reduced zoom level -->
     <title>MadEgg Proxy</title>
     <link rel="icon" href="https://ih1.redbubble.net/image.510166760.1101/st,small,507x507-pad,600x600,f8f8f8.u1.jpg" type="image/jpeg"> <!-- Favicon -->
     <style>
@@ -23,13 +23,14 @@
             align-items: center;
             color: white;
             overflow: hidden; /* Prevent page from scrolling */
-            padding: 20px; /* Added padding to ensure spacing */
+            padding: 10px; /* Adjusted padding */
+            transform: scale(0.9); /* Reduced overall zoom level */
         }
 
         /* Header Styling */
         h1 {
             font-family: "Futura", Futura, serif;
-            font-size: 2.8rem; /* Increased size of header */
+            font-size: 2.2rem; /* Adjusted size for header */
             margin-bottom: 20px;
             text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
             text-align: center;
@@ -42,7 +43,7 @@
 
         .time-date {
             font-family: "Futura", Futura, serif;
-            font-size: 1.5rem;
+            font-size: 1.2rem; /* Reduced size of time/date */
             margin-bottom: 20px;
             text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
             transition: transform 0.3s ease;
@@ -62,10 +63,10 @@
         .input {
             font-family: "Futura", Futura, serif;
             width: 100%;
-            padding: 12px; /* Reduced padding */
+            padding: 10px; /* Reduced padding */
             border: none;
-            border-radius: 20px; /* Slightly smaller border radius */
-            font-size: 1.1rem; /* Slightly smaller font size */
+            border-radius: 20px;
+            font-size: 1rem; /* Reduced font size */
             backdrop-filter: blur(10px);
             background: rgba(255, 255, 255, 0.2);
             color: white;
@@ -87,11 +88,12 @@
             margin-top: 20px;
             display: flex;
             justify-content: center;
-            gap: 30px; /* Adjusted gap */
+            gap: 25px; /* Adjusted gap for the bookmarks */
             flex-wrap: wrap;
-            opacity: 0;
-            animation: enterBookmarks 1s forwards 0.5s; /* Added animation for fade-in */
             margin: 20px 0; /* Added margin around the bookmarks */
+            opacity: 0;
+            animation: enterBookmarks 1s forwards 0.5s;
+            backdrop-filter: blur(10px); /* Applied blur directly to the container */
         }
 
         .bookmark {
@@ -100,30 +102,29 @@
             align-items: center;
             text-decoration: none;
             color: white;
-            backdrop-filter: blur(10px); /* Now it's applied earlier */
             background: rgba(255, 255, 255, 0.2);
-            padding: 15px; /* Adjusted padding */
+            padding: 10px; /* Adjusted padding for the bookmark */
             border-radius: 15px;
-            width: 150px; /* Increased container size */
-            height: 150px; /* Increased container size */
+            width: 120px; /* Adjusted size for bookmark container */
+            height: 120px; /* Adjusted size for bookmark container */
             text-align: center;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
         }
 
         .bookmark img {
-            height: 40px; /* Fixed image size */
+            height: 40px; /* Fixed image size back to 40px height */
             width: auto;
             transition: transform 0.3s ease;
         }
 
         .bookmark span {
-            font-size: 1rem; /* Increased text size for bookmarks */
-            margin-top: 10px;
+            font-size: 0.9rem; /* Adjusted text size for bookmarks */
+            margin-top: 5px;
         }
 
         .bookmark:hover {
-            transform: scale(1.05); /* Slightly smaller scale */
+            transform: scale(1.05); /* Slightly smaller scale for hover effect */
             background: rgba(255, 255, 255, 0.3);
         }
 
@@ -145,13 +146,13 @@
         }
 
         .menu-button {
-            padding: 20px; /* Reduced padding */
+            padding: 15px; /* Reduced padding for menu buttons */
             background: rgba(255, 255, 255, 0.2);
             color: white;
             border-radius: 25px;
             cursor: pointer;
             font-family: "Futura", Futura, serif;
-            font-size: 1.2rem; /* Increased text size for menu buttons */
+            font-size: 1.1rem; /* Adjusted size for menu button text */
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             transition: background 0.3s ease, transform 0.3s ease;
         }
