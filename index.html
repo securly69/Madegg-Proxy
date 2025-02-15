@@ -133,6 +133,61 @@
             transform: rotate(10deg) scale(1.1);
         }
 
+        .add-bookmark {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 1rem;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        .add-bookmark:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .add-bookmark-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            color: white;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .add-bookmark-modal input {
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            width: 100%;
+        }
+
+        .add-bookmark-modal button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: #5192f5;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .add-bookmark-modal button:hover {
+            background: #3e81e6;
+        }
+        
         .top-right-menu, .top-left-menu {
             position: absolute;
             top: 10px;
