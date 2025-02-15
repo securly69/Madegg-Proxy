@@ -61,8 +61,8 @@ function SHS() {
 }
 
 function AB() {
-  var win = window.open("", "", "width=window.innerWidth,height=window.innerHeight,scrollbars=no,resizable=no");
-  
+  var win = window.open("", "", "width=" + window.innerWidth + ",height=" + window.innerHeight + ",scrollbars=no,resizable=no");
+
   // Set the title of the new window (tab)
   win.document.title = "My Classes - Google Classroom";
   
@@ -95,7 +95,12 @@ function AB() {
 
   // Add load event to ensure that styles are applied after iframe content is loaded
   iframe.onload = function() {
-    win.document.body.style.overflow = 'hidden';  // Double check on iframe load
-    win.document.documentElement.style.overflow = 'hidden';  // Double check on iframe load
+    // Locking scrollbars after iframe is fully loaded
+    win.document.body.style.overflow = 'hidden';
+    win.document.documentElement.style.overflow = 'hidden';
   }
+
+  // Locking the window size (no resize allowed)
+  win.resizeTo(window.innerWidth, window.innerHeight);
+  win.moveTo(0, 0); // Optional: Lock window position to top-left corner
 }
