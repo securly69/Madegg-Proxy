@@ -323,32 +323,35 @@
     });
 
     saveBookmarkButton.addEventListener('click', () => {
-      const name = document.getElementById('bookmark-name').value;
-      const url = document.getElementById('bookmark-url').value;
+  const name = document.getElementById('bookmark-name').value;
+  const url = document.getElementById('bookmark-url').value;
 
-      if (name && url) {
-        const link = document.createElement('a');
-        link.href = '#'; // placeholder; navigation is handled via click event
-        link.className = 'bookmark';
+  if (name && url) {
+    const link = document.createElement('a');
+    link.href = '#'; // placeholder; navigation is handled via click event
+    link.className = 'bookmark';
 
-        const img = document.createElement('img');
-        img.src = `https://www.google.com/s2/favicons?sz=64&domain_url=${encodeURIComponent(url)}`;
-        img.alt = name;
-        link.appendChild(img);
+    const img = document.createElement('img');
+    img.src = `https://www.google.com/s2/favicons?sz=64&domain_url=${encodeURIComponent(url)}`;
+    img.alt = name;
+    link.appendChild(img);
 
-        const span = document.createElement('span');
-        span.textContent = name;
-        link.appendChild(span);
+    const span = document.createElement('span');
+    span.textContent = name;
+    link.appendChild(span);
 
-        // Use the navigateBookmark function on click
-        link.addEventListener('click', () => {
-          navigateBookmark(url);
-        });
-
-        bookmarksContainer.appendChild(link);
-        addBookmarkModal.style.display = 'none';
-      }
+    // Use the navigateBookmark function on click
+    link.addEventListener('click', () => {
+      navigateBookmark(url);
     });
+
+    // Insert the new bookmark before the "Add Bookmark" button
+    bookmarksContainer.insertBefore(link, addBookmarkButton);
+
+    addBookmarkModal.style.display = 'none';
+  }
+});
+
 
     // -------------------------------
     // Typewriter Effect for Rotating Text
