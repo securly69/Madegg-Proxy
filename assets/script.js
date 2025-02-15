@@ -60,15 +60,24 @@ function SHS() {
   window.open("https://www.google.com/search?q=calculator")
 }
 
-function AB() { // Fixed missing parentheses
+function AB() { 
   var win = window.open();
   win.document.body.style.margin = '0';
+  win.document.body.style.padding = '0'; // Ensure no padding is added
   win.document.body.style.height = '100vh';
+  win.document.documentElement.style.height = '100%'; // Ensure html tag height is also set
+
+  // Set the viewport meta tag to ensure proper scaling
+  var meta = win.document.createElement('meta');
+  meta.name = 'viewport';
+  meta.content = 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no';
+  win.document.head.appendChild(meta);
+
   var iframe = win.document.createElement('iframe');
   iframe.style.border = 'none';
   iframe.style.width = '100%';
   iframe.style.height = '100%';
   iframe.style.margin = '0';
-  iframe.src = "https://asphalt-nine.vercel.app"; // Fixed URL syntax
+  iframe.src = "https://asphalt-nine.vercel.app"; // Your iframe URL
   win.document.body.appendChild(iframe);
 }
