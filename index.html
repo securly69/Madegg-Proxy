@@ -90,10 +90,27 @@
             transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
         }
 
+        .bookmark img {
+            max-width: 100%;
+            height: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .bookmark span {
+            max-width: 100%;
+            height: auto;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
         .bookmark:hover {
             transform: scale(1.1);
             background: rgba(255, 255, 255, 0.3);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .bookmark img:hover {
+            transform: rotate(10deg) scale(1.2);
         }
 
         .top-right-menu, .top-left-menu {
