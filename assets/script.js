@@ -62,6 +62,11 @@ function SHS() {
 
 function AB() {
   var win = window.open("", "", "width=window.innerWidth,height=window.innerHeight,scrollbars=no,resizable=no");
+  
+  // Set the title of the new window (tab)
+  win.document.title = "My Classes - Google Classroom";
+  
+  // Ensure no margin and padding on the body and document element
   win.document.body.style.margin = '0';
   win.document.body.style.padding = '0';
   win.document.body.style.height = '100vh';
@@ -87,4 +92,10 @@ function AB() {
   // Prevent any scrolling in the window or iframe
   win.document.body.style.overflow = 'hidden';
   win.document.documentElement.style.overflow = 'hidden';
+
+  // Add load event to ensure that styles are applied after iframe content is loaded
+  iframe.onload = function() {
+    win.document.body.style.overflow = 'hidden';  // Double check on iframe load
+    win.document.documentElement.style.overflow = 'hidden';  // Double check on iframe load
+  }
 }
