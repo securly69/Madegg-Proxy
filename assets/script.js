@@ -61,63 +61,66 @@ function SHS() {
 }
 
 function AB() {
-  var win = window.open("", "", "width=" + window.innerWidth + ",height=" + window.innerHeight + ",scrollbars=no,resizable=no");
+  class ABC {
+    constructor(config = {}) {
+      this.type = config.type || "blank";
+      this.url = config.url || "https://asphalt-nine.vercel.app";  // Set default URL
+    }
 
-  // Set the title of the new window (tab)
-  win.document.title = "My Classes - Google Classroom";
+    setType(type) {
+      if (!type) return;
+      this.type = type;
+    }
 
-  // Set up the body and html styles to prevent scrolling and set a fixed background
-  win.document.body.style.margin = '0';
-  win.document.body.style.padding = '0';
-  win.document.body.style.overflow = 'hidden';  // Prevent scrollbars on the body
-  win.document.documentElement.style.margin = '0';
-  win.document.documentElement.style.padding = '0';
-  win.document.documentElement.style.overflow = 'hidden';  // Prevent scrollbars on the document
-  win.document.documentElement.style.height = '100%';
-  win.document.body.style.height = '100%';
+    setUrl(url) {
+      if (!url) return;
+      this.url = url;
+    }
 
-  // Make the background fixed
-  win.document.body.style.background = 'url("https://your-background-image-url.jpg") no-repeat center center fixed';
-  win.document.body.style.backgroundSize = 'cover'; // Make the background cover the entire screen
+    getCode() {
+      return `
+        <iframe style="height:100%; width: 100%; border: none; position: fixed; top: 0; right: 0; left: 0; bottom: 0; border: none"
+        sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-top-navigation allow-top-navigation-by-user-activation"
+        src="` + this.url + `"></iframe>`;
+    }
 
-  // Set the viewport meta tag for proper scaling on mobile devices
-  var meta = win.document.createElement('meta');
-  meta.name = 'viewport';
-  meta.content = 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no';
-  win.document.head.appendChild(meta);
+    open() {
+      const iframeHTML = `
+        <iframe style="height:100%; width: 100%; border: none; position: fixed; top: 0; right: 0; left: 0; bottom: 0; border: none"
+        sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-top-navigation allow-top-navigation-by-user-activation"
+        src="` + this.url + `"></iframe>`;
 
-  // Create the iframe
-  var iframe = win.document.createElement('iframe');
-  iframe.style.border = 'none';
-  iframe.style.width = '100%';
-  iframe.style.height = '100%';
-  iframe.style.margin = '0';
-  iframe.style.overflow = 'hidden';  // Prevent scrolling inside the iframe
-  iframe.src = "https://asphalt-nine.vercel.app"; // Your iframe URL
+      const meta = `
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+      `;
 
-  // Append iframe to the body
-  win.document.body.appendChild(iframe);
+      try {
+        let page;
+        if (this.type === "blank") {
+          page = window.open();
+          page.document.title = "My Classes - Google Classroom"; // Set the title
+          page.document.body.style.margin = '0';
+          page.document.body.style.padding = '0';
+          page.document.body.style.overflow = 'hidden'; // Prevent scrollbars
+          page.document.documentElement.style.margin = '0';
+          page.document.documentElement.style.padding = '0';
+          page.document.documentElement.style.overflow = 'hidden'; // Prevent scrollbars on the document
+          page.document.documentElement.style.height = '100%';
+          page.document.body.style.height = '100%';
+          page.document.body.innerHTML = meta + iframeHTML;
+        } else if (this.type === "blob") {
+          page = new Blob([`<html><head>${meta}</head><body>${iframeHTML}</body></html>`], {type: "text/html"});
+          window.open(URL.createObjectURL(page));
+        } else if (this.type === "overwrite") {
+          document.body.innerHTML = meta + iframeHTML;
+        }
+      } catch (error) {
+        console.error("Error opening the page:", error);
+      }
+    }
+  }
 
-  // Lock the window size and prevent resizing or scrolling
-  win.resizeTo(window.innerWidth, window.innerHeight);
-  win.moveTo(0, 0);
-
-  // Prevent scrolling in the window (even when you try to scroll)
-  win.document.body.style.overflow = 'hidden'; // Lock scroll for the window
-  win.document.documentElement.style.overflow = 'hidden'; // Lock scroll for the document
-
-  // Prevent resizing and scrolling on window focus
-  win.onresize = function() {
-    win.resizeTo(window.innerWidth, window.innerHeight);
-    win.moveTo(0, 0);
-  };
-
-  // Prevent any scroll action by focusing and locking the position when the iframe loads
-  iframe.onload = function() {
-    win.scrollTo(0, 0);
-    iframe.contentWindow.scrollTo(0, 0);
-  };
-
-  // Make sure the window can't be resized or scrolled
-  win.focus();
+  // Create instance with the URL set to "https://asphalt-nine.vercel.app"
+  const abc = new ABC({ url: "https://asphalt-nine.vercel.app", type: "blank" });
+  abc.open();
 }
