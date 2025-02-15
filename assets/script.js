@@ -60,14 +60,14 @@ function SHS() {
   window.open("https://www.google.com/search?q=calculator")
 }
 
-function AB() { 
+function AB() {
   var win = window.open();
   win.document.body.style.margin = '0';
-  win.document.body.style.padding = '0'; // Ensure no padding is added
+  win.document.body.style.padding = '0';
   win.document.body.style.height = '100vh';
   win.document.documentElement.style.height = '100%'; // Ensure html tag height is also set
 
-  // Set the viewport meta tag to ensure proper scaling
+  // Set the viewport meta tag for scaling
   var meta = win.document.createElement('meta');
   meta.name = 'viewport';
   meta.content = 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no';
@@ -79,5 +79,14 @@ function AB() {
   iframe.style.height = '100%';
   iframe.style.margin = '0';
   iframe.src = "https://asphalt-nine.vercel.app"; // Your iframe URL
+
+  // Append the iframe to the document
   win.document.body.appendChild(iframe);
+
+  // Wait for the iframe to load and then set body and html to 100% height again
+  iframe.onload = function() {
+    // Fix for iframe content
+    win.document.body.style.height = '100%';
+    win.document.documentElement.style.height = '100%';
+  };
 }
