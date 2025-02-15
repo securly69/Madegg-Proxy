@@ -1,160 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
- 
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="shortcut icon" href="./assets/ultraviolet.png" type="image/png">
-  <title>Asphalt</title>
-
-
-  <!-- Styles and fonts -->
-  <link rel="stylesheet" href="./assets/style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap"
-    rel="stylesheet">
-
-  <!-- Scripts -->
-  <script src="./uv/uv.bundle.js"></script>
-  <script src="./uv/uv.config.js"></script>
-  <script src="./assets/register-sw.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MadEgg Proxy</title>
+    <link rel="stylesheet" href="./assets/style.css">
 </head>
-
 <body>
-  <style>
-    /* General reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+    <div class="time-date" id="time-date"></div>
 
-/* Body styling */
-body {
-  font-family: 'IBM Plex Sans', sans-serif;
-  background-color: #f0f0f0;
-  color: #333;
-  line-height: 1.6;
-  padding: 0;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-/* Container Styling */
-.container {
-  text-align: center;
-  padding: 50px;
-  max-width: 800px;
-  margin: auto;
-  background-color: #fff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-}
-
-/* Header Styling */
-.header {
-  font-size: 48px;
-  font-weight: 700;
-  color: #222;
-  margin-bottom: 20px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
-/* Description Styling */
-.description {
-  font-size: 18px;
-  color: #555;
-  margin-bottom: 30px;
-}
-
-/* Input field styling */
-.input {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  border: 2px solid #ccc;
-  border-radius: 30px;
-  margin-bottom: 20px;
-  transition: border-color 0.3s ease-in-out;
-}
-
-.input:focus {
-  border-color: #007bff;
-  outline: none;
-}
-
-/* Button Styling */
-.button {
-  background-color: #333;
-  color: #fff;
-  border: none;
-  padding: 12px 24px;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 50px;
-  transition: background-color 0.3s ease;
-  margin: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.button:hover {
-  background-color: #555;
-}
-
-.button:focus {
-  outline: none;
-}
-
-/* Footer Styling */
-.footer {
-  background-color: #222;
-  color: #fff;
-  padding: 20px 0;
-  text-align: center;
-}
-
-.footer a {
-  color: #fff;
-  text-decoration: none;
-  font-size: 14px;
-  transition: color 0.3s ease;
-}
-
-.footer a:hover {
-  color: #007bff;
-}
-  </style>
-  <div class="container">
-    <h1 class="header">
-      
-      Asphalt
-    </h1>
-    <p class="description">An ultraviolet based proxy</p>
-    <input type="text" class="input" placeholder="Enter a search query or URL">
-  </div>
-
-  <div class="footer">
-    <div>
+    <div class="container">
+        <input type="text" class="input" placeholder="Enter a search query or URL">
     </div>
 
-   
-  </div>
-  
-  <script>
-    // Search history spammer implementation
+    <div class="bookmarks" id="bookmarks">
+        <a href="#" class="bookmark" data-url="https://www.youtube.com">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" alt="YouTube">
+            <span>YouTube</span>
+        </a>
+        <a href="#" class="bookmark" data-url="https://twitter.com">
+            <img src="https://cdn.freebiesupply.com/logos/large/2x/twitter-3-logo-png-transparent.png" alt="Twitter">
+            <span>Twitter</span>
+        </a>
+        <a href="#" class="bookmark" data-url="https://discord.com">
+            <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png" alt="Discord">
+            <span>Discord</span>
+        </a>
+        <a href="#" class="bookmark" data-url="https://www.nvidia.com/en-us/geforce-now/">
+            <img src="https://www.nesabamedia.com/wp-content/uploads/2022/06/GeForce-NOW-Logo-1.png" alt="GeForce Now">
+            <span>GeForce Now</span>
+        </a>
+    </div>
 
-    
-  </script>
-  <script src="./assets/script.js" defer></script>
+    <script>
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('time-date').textContent = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        document.querySelectorAll('.bookmark').forEach(bookmark => {
+            bookmark.addEventListener('click', function(event) {
+                event.preventDefault();
+                const url = this.getAttribute('data-url');
+                document.querySelector('.input').value = url;
+                document.querySelector('.input').dispatchEvent(new KeyboardEvent('keypress', { key: 'Enter' }));
+            });
+        });
+    </script>
+
+    <script src="./assets/script.js" defer></script>
+    <script src="./uv/uv.bundle.js"></script>
+    <script src="./uv/uv.config.js"></script>
+    <script src="./assets/register-sw.js"></script>
 </body>
-<head>
-  <button class = 'button' onclick=SHS()>Search history spammer</button>
-  <button class = 'button' onclick=create_blnkr()>About:blank cloaker</button>
-</head>
 </html>
