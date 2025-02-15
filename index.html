@@ -29,10 +29,15 @@
         /* Header Styling */
         h1 {
             font-family: "Futura", Futura, serif;
-            font-size: 2.5rem; /* Increased size of header */
+            font-size: 2.8rem; /* Increased size of header */
             margin-bottom: 20px;
             text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
             text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        h1:hover {
+            transform: scale(1.1);
         }
 
         .time-date {
@@ -57,10 +62,10 @@
         .input {
             font-family: "Futura", Futura, serif;
             width: 100%;
-            padding: 15px;
+            padding: 12px; /* Reduced padding */
             border: none;
-            border-radius: 25px;
-            font-size: 1.2rem; /* Larger text size for input */
+            border-radius: 20px; /* Slightly smaller border radius */
+            font-size: 1.1rem; /* Slightly smaller font size */
             backdrop-filter: blur(10px);
             background: rgba(255, 255, 255, 0.2);
             color: white;
@@ -79,13 +84,14 @@
         }
 
         .bookmarks {
-            margin-top: 40px;
+            margin-top: 20px;
             display: flex;
             justify-content: center;
-            gap: 30px; /* Increased gap for better spacing */
+            gap: 30px; /* Adjusted gap */
             flex-wrap: wrap;
             opacity: 0;
-            animation: enterBookmarks 1s forwards 0.5s; /* Adding animation for fade-in */
+            animation: enterBookmarks 1s forwards 0.5s; /* Added animation for fade-in */
+            margin: 20px 0; /* Added margin around the bookmarks */
         }
 
         .bookmark {
@@ -94,19 +100,19 @@
             align-items: center;
             text-decoration: none;
             color: white;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px); /* Now it's applied earlier */
             background: rgba(255, 255, 255, 0.2);
-            padding: 20px; /* Increased padding for bigger bookmarks */
+            padding: 15px; /* Adjusted padding */
             border-radius: 15px;
-            width: 180px; /* Increased container size */
-            height: 180px; /* Increased container size */
+            width: 150px; /* Increased container size */
+            height: 150px; /* Increased container size */
             text-align: center;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
         }
 
         .bookmark img {
-            height: 60px; /* Image size increased */
+            height: 40px; /* Fixed image size */
             width: auto;
             transition: transform 0.3s ease;
         }
@@ -117,12 +123,12 @@
         }
 
         .bookmark:hover {
-            transform: scale(1.1);
+            transform: scale(1.05); /* Slightly smaller scale */
             background: rgba(255, 255, 255, 0.3);
         }
 
         .bookmark img:hover {
-            transform: rotate(10deg) scale(1.2);
+            transform: rotate(10deg) scale(1.1);
         }
 
         .top-right-menu, .top-left-menu {
@@ -139,7 +145,7 @@
         }
 
         .menu-button {
-            padding: 25px; /* Increased button size */
+            padding: 20px; /* Reduced padding */
             background: rgba(255, 255, 255, 0.2);
             color: white;
             border-radius: 25px;
@@ -207,8 +213,8 @@
         // Time and Date Function
         function updateTimeDate() {
             const date = new Date();
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-            document.getElementById('time-date').textContent = date.toLocaleDateString('en-US', options);
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            document.getElementById('time-date').textContent = date.toLocaleDateString('en-US', options).replace(' at', ','); // Changed "at" to ","
         }
         setInterval(updateTimeDate, 1000);
         updateTimeDate(); // Initial call to display the date/time immediately
