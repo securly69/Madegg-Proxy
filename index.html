@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Reset zoom level to default -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MadEgg Proxy</title>
     <link rel="icon" href="https://ih1.redbubble.net/image.510166760.1101/st,small,507x507-pad,600x600,f8f8f8.u1.jpg" type="image/jpeg">
     <style>
@@ -62,7 +62,7 @@
         .input {
             font-family: "Futura", Futura, serif;
             width: 100%;
-            padding: 10px;
+            padding: 20px; /* Increased padding to make the search bar thicker */
             border: none;
             border-radius: 20px;
             font-size: 1rem;
@@ -94,6 +94,7 @@
             animation: enterBookmarks 1s forwards 0.5s;
             width: 100%;
             max-width: 800px; /* Adjusted width to control max container size */
+            text-align: center;
         }
 
         .bookmark {
@@ -110,6 +111,7 @@
             text-align: center;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(10px); /* Added blur to each bookmark */
         }
 
         .bookmark img {
