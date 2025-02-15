@@ -206,7 +206,13 @@
             <span>GeForce Now</span>
         </a>
     </div>
+    <div class="add-bookmark" id="add-bookmark">+ Add Bookmark</div>
 
+        <div class="add-bookmark-modal" id="add-bookmark-modal">
+            <input type="text" id="bookmark-name" placeholder="Bookmark Name">
+            <input type="text" id="bookmark-url" placeholder="Bookmark URL">
+            <button id="save-bookmark">Save</button>
+        </div>
     <!-- Including the scripts -->
     <script src="./assets/script.js" defer></script>
     <script src="./uv/uv.bundle.js"></script>
@@ -224,9 +230,50 @@
         updateTimeDate();
 
         // Navigate to the bookmark
-        function navigateBookmark(url) {
-            window.location.href = __uv$config.prefix + __uv$config.encodeUrl(url);
-        }
+        // Function to navigate to the bookmark URL using __uv$config
+function navigateBookmark(url) {
+    window.location.href = __uv$config.prefix + __uv$config.encodeUrl(url);
+}
+
+const addBookmarkButton = document.getElementById('add-bookmark');
+const addBookmarkModal = document.getElementById('add-bookmark-modal');
+const saveBookmarkButton = document.getElementById('save-bookmark');
+const bookmarksContainer = document.getElementById('bookmarks');
+
+addBookmarkButton.addEventListener('click', () => {
+    addBookmarkModal.style.display = 'flex';
+});
+
+saveBookmarkButton.addEventListener('click', () => {
+    const name = document.getElementById('bookmark-name').value;
+    const url = document.getElementById('bookmark-url').value;
+
+    if (name && url) {
+        const link = document.createElement('a');
+        
+        // Use the navigateBookmark function instead of setting href to proxy.php
+        link.href = '#'; // Placeholder href
+        link.className = 'bookmark';
+
+        const img = document.createElement('img');
+        img.src = `https://www.google.com/s2/favicons?sz=64&domain_url=${encodeURIComponent(url)}`;
+        img.alt = name;
+        link.appendChild(img);
+
+        const span = document.createElement('span');
+        span.textContent = name;
+        link.appendChild(span);
+
+        // Add the click event to navigate to the bookmark using the navigateBookmark function
+        link.addEventListener('click', () => {
+            navigateBookmark(url);
+        });
+
+        bookmarksContainer.appendChild(link);
+
+        addBookmarkModal.style.display = 'none';
+    }
+});
     </script>
 </body>
 </html>
