@@ -61,7 +61,7 @@ function SHS() {
 }
 
 function AB() {
-  var win = window.open();
+  var win = window.open("", "", "width=window.innerWidth,height=window.innerHeight,scrollbars=no,resizable=no");
   win.document.body.style.margin = '0';
   win.document.body.style.padding = '0';
   win.document.body.style.height = '100vh';
@@ -78,15 +78,13 @@ function AB() {
   iframe.style.width = '100%';
   iframe.style.height = '100%';
   iframe.style.margin = '0';
+  iframe.style.overflow = 'hidden'; // Ensure no scrollbars appear
   iframe.src = "https://asphalt-nine.vercel.app"; // Your iframe URL
 
   // Append the iframe to the document
   win.document.body.appendChild(iframe);
 
-  // Wait for the iframe to load and then set body and html to 100% height again
-  iframe.onload = function() {
-    // Fix for iframe content
-    win.document.body.style.height = '100%';
-    win.document.documentElement.style.height = '100%';
-  };
+  // Prevent any scrolling in the window or iframe
+  win.document.body.style.overflow = 'hidden';
+  win.document.documentElement.style.overflow = 'hidden';
 }
