@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MadEgg Proxy</title>
+    <link rel="icon" href="https://ih1.redbubble.net/image.510166760.1101/st,small,507x507-pad,600x600,f8f8f8.u1.jpg" type="image/jpeg"> <!-- Favicon -->
     <style>
         * {
             margin: 0;
@@ -22,6 +23,16 @@
             align-items: center;
             color: white;
             overflow: hidden; /* Prevent page from scrolling */
+            padding: 20px; /* Added padding to ensure spacing */
+        }
+
+        /* Header Styling */
+        h1 {
+            font-family: "Futura", Futura, serif;
+            font-size: 2.5rem; /* Increased size of header */
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+            text-align: center;
         }
 
         .time-date {
@@ -40,6 +51,7 @@
             width: 80%;
             max-width: 600px;
             text-align: center;
+            margin-bottom: 20px;
         }
 
         .input {
@@ -48,7 +60,7 @@
             padding: 15px;
             border: none;
             border-radius: 25px;
-            font-size: 1rem;
+            font-size: 1.2rem; /* Larger text size for input */
             backdrop-filter: blur(10px);
             background: rgba(255, 255, 255, 0.2);
             color: white;
@@ -67,10 +79,10 @@
         }
 
         .bookmarks {
-            margin-top: 20px;
+            margin-top: 40px;
             display: flex;
             justify-content: center;
-            gap: 20px; /* Increased gap for bigger bookmarks */
+            gap: 30px; /* Increased gap for better spacing */
             flex-wrap: wrap;
             opacity: 0;
             animation: enterBookmarks 1s forwards 0.5s; /* Adding animation for fade-in */
@@ -84,32 +96,29 @@
             color: white;
             backdrop-filter: blur(10px);
             background: rgba(255, 255, 255, 0.2);
-            padding: 15px; /* Increased padding for bigger bookmarks */
+            padding: 20px; /* Increased padding for bigger bookmarks */
             border-radius: 15px;
-            width: 120px; /* Increased size of the bookmark */
-            height: 120px; /* Increased size of the bookmark */
+            width: 180px; /* Increased container size */
+            height: 180px; /* Increased container size */
             text-align: center;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
         }
 
         .bookmark img {
-            max-width: 100%;
-            height: auto;
+            height: 60px; /* Image size increased */
+            width: auto;
             transition: transform 0.3s ease;
         }
 
         .bookmark span {
-            max-width: 100%;
-            height: auto;
-            font-size: 0.9rem;
-            margin-top: 5px;
+            font-size: 1rem; /* Increased text size for bookmarks */
+            margin-top: 10px;
         }
 
         .bookmark:hover {
             transform: scale(1.1);
             background: rgba(255, 255, 255, 0.3);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
         }
 
         .bookmark img:hover {
@@ -130,12 +139,13 @@
         }
 
         .menu-button {
-            padding: 10px;
+            padding: 25px; /* Increased button size */
             background: rgba(255, 255, 255, 0.2);
             color: white;
-            border-radius: 15px;
+            border-radius: 25px;
             cursor: pointer;
-            font-family: "Futura", Futura, serif; /* Set to Futura */
+            font-family: "Futura", Futura, serif;
+            font-size: 1.2rem; /* Increased text size for menu buttons */
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             transition: background 0.3s ease, transform 0.3s ease;
         }
@@ -153,6 +163,7 @@
     </style>
 </head>
 <body>
+    <h1>MadEgg Proxy</h1> <!-- Header added here -->
     <div class="top-right-menu">
         <button class="menu-button" onclick="SHS()">Search History Spammer</button>
     </div>
@@ -168,20 +179,20 @@
     </div>
 
     <div class="bookmarks" id="bookmarks">
-        <a href="#" class="bookmark" data-url="https://www.youtube.com">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" alt="YouTube" style="height: 60px; width: auto;">
+        <a href="javascript:void(0)" class="bookmark" onclick="navigateBookmark('https://www.youtube.com')">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" alt="YouTube">
             <span>YouTube</span>
         </a>
-        <a href="#" class="bookmark" data-url="https://twitter.com">
-            <img src="https://cdn.freebiesupply.com/logos/large/2x/twitter-3-logo-png-transparent.png" alt="Twitter" style="height: 60px; width: auto;">
+        <a href="javascript:void(0)" class="bookmark" onclick="navigateBookmark('https://twitter.com')">
+            <img src="https://cdn.freebiesupply.com/logos/large/2x/twitter-3-logo-png-transparent.png" alt="Twitter">
             <span>Twitter</span>
         </a>
-        <a href="#" class="bookmark" data-url="https://discord.com">
-            <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png" alt="Discord" style="height: 60px; width: auto;">
+        <a href="javascript:void(0)" class="bookmark" onclick="navigateBookmark('https://discord.com')">
+            <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png" alt="Discord">
             <span>Discord</span>
         </a>
-        <a href="#" class="bookmark" data-url="https://www.nvidia.com/en-us/geforce-now/">
-            <img src="https://www.nesabamedia.com/wp-content/uploads/2022/06/GeForce-NOW-Logo-1.png" alt="GeForce Now" style="height: 60px; width: auto;">
+        <a href="javascript:void(0)" class="bookmark" onclick="navigateBookmark('https://www.nvidia.com/en-us/geforce-now/')">
+            <img src="https://www.nesabamedia.com/wp-content/uploads/2022/06/GeForce-NOW-Logo-1.png" alt="GeForce Now">
             <span>GeForce Now</span>
         </a>
     </div>
@@ -193,38 +204,19 @@
     <script src="./assets/register-sw.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const input = document.querySelector(".input");
-            input.addEventListener("keydown", handleInput);
-
-            function handleInput(e) {
-                // We only want the function to run if the key pressed is the Enter key
-                if (e.key !== 'Enter') return;
-
-                // Run the formatSearch function on the current value of the input
-                const query = formatSearch(input.value);
-
-                // Redirect to [uv prefix] + [encoded search query]
-                window.location.href = __uv$config.prefix + __uv$config.encodeUrl(query);
-            }
-
-            // Handle bookmark click events to simulate input action
-            document.querySelectorAll('.bookmark').forEach(bookmark => {
-                bookmark.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    const url = this.querySelector('a').getAttribute('href'); // Get the actual URL
-                    input.value = url; // Set input to the URL
-                    handleInput({ key: 'Enter' }); // Trigger the search behavior directly
-                });
-            });
-        });
-
-        function updateTime() {
-            const now = new Date();
-            document.getElementById('time-date').textContent = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+        // Time and Date Function
+        function updateTimeDate() {
+            const date = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            document.getElementById('time-date').textContent = date.toLocaleDateString('en-US', options);
         }
-        setInterval(updateTime, 1000);
-        updateTime();
+        setInterval(updateTimeDate, 1000);
+        updateTimeDate(); // Initial call to display the date/time immediately
+
+        // Navigate to the bookmark
+        function navigateBookmark(url) {
+            window.location.href = __uv$config.prefix + __uv$config.encodeUrl(url);
+        }
     </script>
 </body>
 </html>
