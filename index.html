@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.8"> <!-- Reduced zoom level -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Reset zoom level to default -->
     <title>MadEgg Proxy</title>
-    <link rel="icon" href="https://ih1.redbubble.net/image.510166760.1101/st,small,507x507-pad,600x600,f8f8f8.u1.jpg" type="image/jpeg"> <!-- Favicon -->
+    <link rel="icon" href="https://ih1.redbubble.net/image.510166760.1101/st,small,507x507-pad,600x600,f8f8f8.u1.jpg" type="image/jpeg">
     <style>
         * {
             margin: 0;
@@ -22,15 +22,14 @@
             justify-content: center;
             align-items: center;
             color: white;
-            overflow: hidden; /* Prevent page from scrolling */
-            padding: 10px; /* Adjusted padding */
-            transform: scale(0.9); /* Reduced overall zoom level */
+            overflow: hidden;
+            padding: 10px;
         }
 
         /* Header Styling */
         h1 {
             font-family: "Futura", Futura, serif;
-            font-size: 2.2rem; /* Adjusted size for header */
+            font-size: 2.2rem;
             margin-bottom: 20px;
             text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
             text-align: center;
@@ -43,7 +42,7 @@
 
         .time-date {
             font-family: "Futura", Futura, serif;
-            font-size: 1.2rem; /* Reduced size of time/date */
+            font-size: 1.2rem;
             margin-bottom: 20px;
             text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
             transition: transform 0.3s ease;
@@ -63,10 +62,10 @@
         .input {
             font-family: "Futura", Futura, serif;
             width: 100%;
-            padding: 10px; /* Reduced padding */
+            padding: 10px;
             border: none;
             border-radius: 20px;
-            font-size: 1rem; /* Reduced font size */
+            font-size: 1rem;
             backdrop-filter: blur(10px);
             background: rgba(255, 255, 255, 0.2);
             color: white;
@@ -88,12 +87,14 @@
             margin-top: 20px;
             display: flex;
             justify-content: center;
-            gap: 25px; /* Adjusted gap for the bookmarks */
+            gap: 25px;
             flex-wrap: wrap;
-            margin: 20px 0; /* Added margin around the bookmarks */
+            margin: 20px 0;
             opacity: 0;
             animation: enterBookmarks 1s forwards 0.5s;
-            backdrop-filter: blur(10px); /* Applied blur directly to the container */
+            backdrop-filter: blur(10px);
+            width: 100%;
+            max-width: 800px; /* Adjusted width to control max container size */
         }
 
         .bookmark {
@@ -103,28 +104,28 @@
             text-decoration: none;
             color: white;
             background: rgba(255, 255, 255, 0.2);
-            padding: 10px; /* Adjusted padding for the bookmark */
+            padding: 10px;
             border-radius: 15px;
-            width: 120px; /* Adjusted size for bookmark container */
-            height: 120px; /* Adjusted size for bookmark container */
+            width: 120px;
+            height: 120px;
             text-align: center;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
         }
 
         .bookmark img {
-            height: 40px; /* Fixed image size back to 40px height */
+            height: 40px;
             width: auto;
             transition: transform 0.3s ease;
         }
 
         .bookmark span {
-            font-size: 0.9rem; /* Adjusted text size for bookmarks */
+            font-size: 0.9rem;
             margin-top: 5px;
         }
 
         .bookmark:hover {
-            transform: scale(1.05); /* Slightly smaller scale for hover effect */
+            transform: scale(1.05);
             background: rgba(255, 255, 255, 0.3);
         }
 
@@ -146,13 +147,13 @@
         }
 
         .menu-button {
-            padding: 15px; /* Reduced padding for menu buttons */
+            padding: 15px;
             background: rgba(255, 255, 255, 0.2);
             color: white;
             border-radius: 25px;
             cursor: pointer;
             font-family: "Futura", Futura, serif;
-            font-size: 1.1rem; /* Adjusted size for menu button text */
+            font-size: 1.1rem;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             transition: background 0.3s ease, transform 0.3s ease;
         }
@@ -170,7 +171,7 @@
     </style>
 </head>
 <body>
-    <h1>MadEgg Proxy</h1> <!-- Header added here -->
+    <h1>MadEgg Proxy</h1> 
     <div class="top-right-menu">
         <button class="menu-button" onclick="SHS()">Search History Spammer</button>
     </div>
@@ -215,10 +216,10 @@
         function updateTimeDate() {
             const date = new Date();
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-            document.getElementById('time-date').textContent = date.toLocaleDateString('en-US', options).replace(' at', ','); // Changed "at" to ","
+            document.getElementById('time-date').textContent = date.toLocaleDateString('en-US', options).replace(' at', ',');
         }
         setInterval(updateTimeDate, 1000);
-        updateTimeDate(); // Initial call to display the date/time immediately
+        updateTimeDate();
 
         // Navigate to the bookmark
         function navigateBookmark(url) {
