@@ -66,46 +66,52 @@ function AB() {
   // Set the title of the new window (tab)
   win.document.title = "My Classes - Google Classroom";
 
-  // Ensure no margin and padding on the body and document element
+  // Ensure the body and html elements have no margin, padding, and fill the entire screen
   win.document.body.style.margin = '0';
   win.document.body.style.padding = '0';
   win.document.body.style.height = '100vh';
-  win.document.documentElement.style.height = '100%'; // Ensure html tag height is also set
+  win.document.documentElement.style.margin = '0';
+  win.document.documentElement.style.padding = '0';
+  win.document.documentElement.style.height = '100%';
 
-  // Set the viewport meta tag for scaling
+  // Set the viewport meta tag for proper scaling on mobile devices
   var meta = win.document.createElement('meta');
   meta.name = 'viewport';
   meta.content = 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no';
   win.document.head.appendChild(meta);
 
+  // Create the iframe
   var iframe = win.document.createElement('iframe');
   iframe.style.border = 'none';
   iframe.style.width = '100%';
   iframe.style.height = '100%';
   iframe.style.margin = '0';
-  iframe.style.overflow = 'hidden'; // Ensure no scrollbars appear
+  iframe.style.overflow = 'hidden'; // Prevent scrolling within iframe
   iframe.src = "https://asphalt-nine.vercel.app"; // Your iframe URL
 
-  // Append the iframe to the document
+  // Append iframe to body
   win.document.body.appendChild(iframe);
 
-  // Locking the window size (no resize allowed)
+  // Lock the window size and position
   win.resizeTo(window.innerWidth, window.innerHeight);
-  win.moveTo(0, 0); // Optional: Lock window position to top-left corner
+  win.moveTo(0, 0); // Optional: Move the window to the top-left corner
+
+  // Prevent scrolling on the window by removing the scrollbars
+  win.document.body.style.overflow = 'hidden'; // Lock scroll for the window
+  win.document.documentElement.style.overflow = 'hidden'; // Lock scroll for the document
 
   // Make sure the window can't be resized or scrolled
   win.onresize = function() {
     win.resizeTo(window.innerWidth, window.innerHeight);
+    win.moveTo(0, 0);
   };
-  win.scrollTo(0, 0); // Prevent scrolling
 
-  // Apply styles to prevent scrolling
-  win.document.body.style.overflow = 'hidden';
-  win.document.documentElement.style.overflow = 'hidden';
+  // Lock the size and position even when the window is focused again
+  win.focus();
 
-  // Add load event to ensure that styles are applied after iframe content is loaded
+  // Prevent scrolling in the iframe and the window
   iframe.onload = function() {
-    win.document.body.style.overflow = 'hidden';
-    win.document.documentElement.style.overflow = 'hidden';
+    win.scrollTo(0, 0);
+    iframe.contentWindow.scrollTo(0, 0);
   };
 }
