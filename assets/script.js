@@ -65,7 +65,7 @@ function AB() {
 
   // Set the title of the new window (tab)
   win.document.title = "My Classes - Google Classroom";
-  
+
   // Ensure no margin and padding on the body and document element
   win.document.body.style.margin = '0';
   win.document.body.style.padding = '0';
@@ -89,18 +89,23 @@ function AB() {
   // Append the iframe to the document
   win.document.body.appendChild(iframe);
 
-  // Prevent any scrolling in the window or iframe
+  // Locking the window size (no resize allowed)
+  win.resizeTo(window.innerWidth, window.innerHeight);
+  win.moveTo(0, 0); // Optional: Lock window position to top-left corner
+
+  // Make sure the window can't be resized or scrolled
+  win.onresize = function() {
+    win.resizeTo(window.innerWidth, window.innerHeight);
+  };
+  win.scrollTo(0, 0); // Prevent scrolling
+
+  // Apply styles to prevent scrolling
   win.document.body.style.overflow = 'hidden';
   win.document.documentElement.style.overflow = 'hidden';
 
   // Add load event to ensure that styles are applied after iframe content is loaded
   iframe.onload = function() {
-    // Locking scrollbars after iframe is fully loaded
     win.document.body.style.overflow = 'hidden';
     win.document.documentElement.style.overflow = 'hidden';
-  }
-
-  // Locking the window size (no resize allowed)
-  win.resizeTo(window.innerWidth, window.innerHeight);
-  win.moveTo(0, 0); // Optional: Lock window position to top-left corner
+  };
 }
