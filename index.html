@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Asphalt Proxy - Chrome-Like Tabbed Browser</title>
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+      /* Global resets */
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f1f3f4;
+      }
+      /* Navigation Bar */
+      #nav-bar {
+        display: flex;
+        align-items: center;
+        background-color: #fff;
+        padding: 5px 10px;
+        border-bottom: 1px solid #ccc;
+      }
+      #nav-bar button {
+        background: none;
+        border: none;
+        padding: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        color: #333;
+      }
+      #nav-bar input {
+        flex: 1;
+        padding: 6px 10px;
+        margin: 0 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+      /* Tab Bar */
+      #tab-bar {
+        display: flex;
+        background-color: #eee;
+        overflow-x: auto;
+        white-space: nowrap;
+        border-bottom: 1px solid #ccc;
+      }
+      .tab {
+        display: flex;
+        align-items: center;
+        padding: 8px 10px;
+        margin-right: 2px;
+        background-color: #ddd;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        cursor: pointer;
+        user-select: none;
+        position: relative;
+      }
+      .tab.active {
+        background-color: #fff;
+        border-bottom: 1px solid #fff;
+      }
+      .tab i {
+        margin-right: 6px;
+      }
+      .tab .close-tab {
+        margin-left: 8px;
+        font-size: 12px;
+        color: #666;
+        cursor: pointer;
+      }
+      /* New Tab Button */
+      #new-tab-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 10px;
+        background-color: #ddd;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        color: #333;
+      }
+      /* Browser Container */
+      #browserContainer iframe {
+        width: 100%;
+        height: calc(100vh - 90px); /* Adjust this height based on nav and tab bars */
+        border: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <div id="nav-bar">
+      <button id="back-btn" title="Back"><i class="fa fa-arrow-left"></i></button>
+      <button id="forward-btn" title="Forward"><i class="fa fa-arrow-right"></i></button>
+      <button id="reload-btn" title="Reload"><i class="fa fa-sync"></i></button>
+      <input type="text" id="url-input" placeholder="Enter URL">
+      <button id="go-btn" title="Go"><i class="fa fa-search"></i></button>
+    </div>
+    <!-- Tab Bar -->
+    <div id="tab-bar">
+      <!-- Tabs will be appended here -->
+      <div id="new-tab-button" title="New Tab"><i class="fa fa-plus"></i></div>
+    </div>
+    <!-- Browser Container -->
+    <div id="browserContainer">
+      <!-- iframes will be appended here -->
+    </div>
+    
+    <script src="script.js"></script>
+  </body>
+</html>
