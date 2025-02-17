@@ -81,10 +81,13 @@
         color: #333;
         cursor: pointer;
       }
-      #nav-bar input {
+      /* New search container as provided */
+      .search-container {
         flex: 1;
+      }
+      .search-container .input {
+        width: 100%;
         padding: 6px 10px;
-        margin: 0 8px;
         border: 1px solid #ccc;
         border-radius: 4px;
         font-size: 14px;
@@ -117,8 +120,10 @@
       <button id="back-btn" title="Back"><i class="fa fa-arrow-left"></i></button>
       <button id="forward-btn" title="Forward"><i class="fa fa-arrow-right"></i></button>
       <button id="reload-btn" title="Reload"><i class="fa fa-sync"></i></button>
-      <input type="text" id="url-input" placeholder="Enter URL">
-      <button id="go-btn" title="Go"><i class="fa fa-search"></i></button>
+      <!-- New search container code -->
+      <div class="search-container">
+        <input type="text" class="input" placeholder="Enter a search query or URL">
+      </div>
     </div>
     <!-- Browser Container -->
     <div id="browserContainer"></div>
