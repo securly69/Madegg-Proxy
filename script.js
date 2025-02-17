@@ -1,30 +1,51 @@
-// Global variables for tab management.
+// Global array for tabs and a variable for the active tab.
 let tabs = [];
 let activeTab = null;
 
 /**
- * normalizeURL:
- *  - If empty or "asphalt://newtab", returns "browser.html" (the default proxy page).
- *  - Otherwise, if the text isn’t a valid URL, treats it as a search query.
+ * handleInput:
+ *  - Grabs the search input.
+ *  - If the query is empty or "asphalt://newtab" (case‑insensitive), it sets finalUrl to the default page ("browser.html").
+ *  - Otherwise, it uses your provided formatSearch function to build the query.
+ *  - Then it constructs the final URL by joining the base ("https://asphalt-nine.vercel.app/") with __uv$config.prefix and __uv$config.encodeUrl(formatted).
+ *  - Finally, it calls navigate(finalUrl).
  */
-function normalizeURL(url) {
-  if (!url || url.trim() === "" || url.toLowerCase() === "asphalt://newtab") {
-    return "browser.html";
+function handleInput() {
+  const input = document.querySelector(".input");
+  let query = input.value.trim();
+  let finalUrl;
+  if (query.toLowerCase() === "asphalt://newtab" || query === "") {
+    finalUrl = "browser.html";
+  } else {
+    // Use formatSearch to process the query.
+    const formatted = formatSearch(query);
+    // Build the final URL using the UV configuration.
+    finalUrl = "https://asphalt-nine.vercel.app/" + __uv$config.prefix + __uv$config.encodeUrl(formatted);
   }
-  try {
-    new URL(url);
-    return url;
-  } catch (e) {
-    // Not a valid URL, so treat as search query.
+  navigate(finalUrl);
+}
+
+/**
+ * navigate:
+ *  - If no active tab exists, it creates one.
+ *  - Otherwise, it updates the active tab's history and sets its iframe src to the given URL.
+ *  - It also updates the search input to display the user-friendly version of the URL.
+ */
+function navigate(url) {
+  if (!activeTab) {
+    createTab(url);
+    return;
   }
-  return "https://google.com/search?q=" + encodeURIComponent(url);
+  activeTab.history = activeTab.history.slice(0, activeTab.historyIndex + 1);
+  activeTab.history.push(url);
+  activeTab.historyIndex++;
+  activeTab.iframe.src = url;
+  document.querySelector(".input").value = displayURL(url);
 }
 
 /**
  * displayURL:
- *  - Converts internal URLs to the user-friendly version.
- *  - If the internal URL is the default proxy ("browser.html" or ending with "/browser.html"),
- *    shows "asphalt://newtab" instead.
+ *  - If the URL is the internal default page, returns "asphalt://newtab" so that it isn’t revealed.
  */
 function displayURL(url) {
   if (url === "browser.html" || url.endsWith("/browser.html")) {
@@ -35,14 +56,14 @@ function displayURL(url) {
 
 /**
  * createTab:
- *  - Creates a new tab using an iframe.
- *  - The default parameter "asphalt://newtab" maps to the default page.
+ *  - Creates a new tab with an iframe.
+ *  - The default parameter "asphalt://newtab" maps to the internal default ("browser.html").
  */
 function createTab(url = "asphalt://newtab") {
-  const normalizedUrl = normalizeURL(url);
+  const finalUrl = (url.toLowerCase() === "asphalt://newtab") ? "browser.html" : url;
   const tabId = "tab-" + Date.now();
 
-  // Create tab element.
+  // Create the tab element.
   const tabElem = document.createElement("div");
   tabElem.className = "tab";
   tabElem.id = tabId;
@@ -52,7 +73,7 @@ function createTab(url = "asphalt://newtab") {
   iconElem.className = "fa fa-star";
   tabElem.appendChild(iconElem);
 
-  // Title element.
+  // Tab title.
   const titleSpan = document.createElement("span");
   titleSpan.className = "tab-title";
   titleSpan.innerText = "New Tab";
@@ -68,16 +89,16 @@ function createTab(url = "asphalt://newtab") {
   };
   tabElem.appendChild(closeBtn);
 
-  // Switch to this tab when clicked.
+  // Switch to this tab on click.
   tabElem.onclick = () => switchTab(tabId);
 
-  // Insert tab element before the New Tab button.
+  // Insert the tab element before the New Tab button.
   const newTabButton = document.getElementById("new-tab-button");
   document.getElementById("tab-bar").insertBefore(tabElem, newTabButton);
 
   // Create the iframe.
   const iframe = document.createElement("iframe");
-  iframe.src = normalizedUrl;
+  iframe.src = finalUrl;
   iframe.id = "iframe-" + tabId;
   iframe.style.opacity = 0;
   iframe.onload = function() {
@@ -85,7 +106,7 @@ function createTab(url = "asphalt://newtab") {
       const doc = iframe.contentDocument || iframe.contentWindow.document;
       let title = doc.title || "New Tab";
       titleSpan.innerText = title;
-      // Update icon with favicon if available.
+      // Update icon using the page's favicon if available.
       const faviconLink = doc.querySelector("link[rel*='icon']");
       if (faviconLink && faviconLink.href) {
         iconElem.className = "";
@@ -113,8 +134,8 @@ function createTab(url = "asphalt://newtab") {
 
   document.getElementById("browserContainer").appendChild(iframe);
 
-  // Set up per-tab history.
-  const tabHistory = [normalizedUrl];
+  // Set up per‑tab history.
+  const tabHistory = [finalUrl];
   let historyIndex = 0;
 
   const tabObject = {
@@ -170,20 +191,6 @@ function closeTab(tabId) {
 }
 
 /**
- * navigate:
- *  - Changes the active tab’s iframe src and updates its history.
- */
-function navigate(url) {
-  if (!activeTab) return;
-  const normalizedUrl = normalizeURL(url);
-  activeTab.history = activeTab.history.slice(0, activeTab.historyIndex + 1);
-  activeTab.history.push(normalizedUrl);
-  activeTab.historyIndex++;
-  activeTab.iframe.src = normalizedUrl;
-  document.querySelector(".input").value = displayURL(normalizedUrl);
-}
-
-/**
  * Navigation commands.
  */
 function goBack() {
@@ -221,8 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById("back-btn").addEventListener("click", goBack);
   document.getElementById("forward-btn").addEventListener("click", goForward);
   document.getElementById("reload-btn").addEventListener("click", reloadPage);
-  
-  // Set up search input and Go button.
+  // Search input and Go button.
   const input = document.querySelector(".input");
   input.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
@@ -233,34 +239,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
- * handleInput:
- *  - Uses your provided formatSearch code.
- *  - Instead of redirecting the whole window, constructs a URL by joining
- *    "https://asphalt-nine.vercel.app/" with __uv$config.prefix and __uv$config.encodeUrl(query),
- *    then calls navigate() on that URL.
- */
-function handleInput() {
-  const input = document.querySelector(".input");
-  let query = input.value.trim();
-  if (query === "") {
-    query = "asphalt://newtab";
-  }
-  // Use the provided formatSearch function.
-  const formatted = formatSearch(query);
-  let finalUrl;
-  // If the query is the default, load the internal default page.
-  if (query.toLowerCase() === "asphalt://newtab" || formatted === "browser.html") {
-    finalUrl = "browser.html";
-  } else {
-    // Build the final URL from the UV config.
-    finalUrl = "https://asphalt-nine.vercel.app/" + __uv$config.prefix + __uv$config.encodeUrl(formatted);
-  }
-  navigate(finalUrl);
-}
-
-/**
  * formatSearch:
- *  - Converts an input into a URL; if it isn’t a URL, turns it into a Google search.
+ *  - Converts the input into a URL. If it isn’t a valid URL, it returns a Google search URL.
  */
 function formatSearch(query) {
   try {
