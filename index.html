@@ -13,7 +13,7 @@
         font-family: Arial, sans-serif;
         background-color: #f1f3f4;
       }
-      /* Tab Bar at the top */
+      /* Tab Bar */
       #tab-bar {
         display: flex;
         align-items: center;
@@ -64,7 +64,7 @@
       #new-tab-button:hover {
         background-color: #d0d0d0;
       }
-      /* Navigation bar below the tabs */
+      /* Navigation Bar */
       #nav-bar {
         display: flex;
         align-items: center;
@@ -80,19 +80,29 @@
         color: #333;
         cursor: pointer;
       }
-      /* Search container with a fixed, smaller width */
+      /* Search container: input and go button */
       .search-container {
-        flex: 0 0 300px;
+        flex: 1;
+        display: flex;
+        align-items: center;
         margin-left: 10px;
       }
       .search-container .input {
-        width: 100%;
+        flex: 1;
         padding: 6px 10px;
         border: 1px solid #ccc;
         border-radius: 4px;
         font-size: 14px;
       }
-      /* Iframe container */
+      .search-container .go-btn {
+        padding: 6px 10px;
+        margin-left: 5px;
+        background-color: #e0e0e0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      /* Browser Container */
       #browserContainer {
         width: 100%;
         height: calc(100vh - 110px);
@@ -121,6 +131,7 @@
       <button id="reload-btn" title="Reload"><i class="fa fa-sync"></i></button>
       <div class="search-container">
         <input type="text" class="input" placeholder="Enter a search query or URL">
+        <button class="go-btn" title="Go"><i class="fa fa-paper-plane"></i></button>
       </div>
     </div>
     <!-- Browser Container -->
