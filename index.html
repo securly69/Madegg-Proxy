@@ -8,13 +8,12 @@
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-      /* Global Styles */
       body {
         margin: 0;
         font-family: Arial, sans-serif;
         background-color: #f1f3f4;
       }
-      /* --- Tab Bar (at the very top) --- */
+      /* Tab Bar at the top */
       #tab-bar {
         display: flex;
         align-items: center;
@@ -65,7 +64,7 @@
       #new-tab-button:hover {
         background-color: #d0d0d0;
       }
-      /* --- Navigation Bar (below tabs) --- */
+      /* Navigation bar below the tabs */
       #nav-bar {
         display: flex;
         align-items: center;
@@ -81,9 +80,10 @@
         color: #333;
         cursor: pointer;
       }
-      /* New search container as provided */
+      /* Search container with a fixed, smaller width */
       .search-container {
-        flex: 1;
+        flex: 0 0 300px;
+        margin-left: 10px;
       }
       .search-container .input {
         width: 100%;
@@ -92,10 +92,10 @@
         border-radius: 4px;
         font-size: 14px;
       }
-      /* --- Browser Container (for iframes) --- */
+      /* Iframe container */
       #browserContainer {
         width: 100%;
-        height: calc(100vh - 110px); /* Adjust based on tab and nav bar heights */
+        height: calc(100vh - 110px);
         position: relative;
       }
       #browserContainer iframe {
@@ -112,7 +112,6 @@
   <body>
     <!-- Tab Bar -->
     <div id="tab-bar">
-      <!-- Tabs will be injected here -->
       <div id="new-tab-button" title="New Tab"><i class="fa fa-plus"></i></div>
     </div>
     <!-- Navigation Bar -->
@@ -120,7 +119,6 @@
       <button id="back-btn" title="Back"><i class="fa fa-arrow-left"></i></button>
       <button id="forward-btn" title="Forward"><i class="fa fa-arrow-right"></i></button>
       <button id="reload-btn" title="Reload"><i class="fa fa-sync"></i></button>
-      <!-- New search container code -->
       <div class="search-container">
         <input type="text" class="input" placeholder="Enter a search query or URL">
       </div>
