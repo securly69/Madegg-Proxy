@@ -1,11 +1,11 @@
-// Store tab objects; each tab will have its own history.
+// Global variables: array of tab objects and the active tab.
 let tabs = [];
 let activeTab = null;
 
-// Normalize the user input URL:
-// • If empty, default to browser.html (displayed as asphalt://newtab)
-// • If it doesn’t start with "http(s)://" or "asphalt://", treat it as a search query (Google)
-// • If the input is "asphalt://newtab", map to browser.html.
+// Normalize the URL input:
+// • If empty, default to "browser.html" (but display as asphalt://newtab)
+// • If not starting with "http(s)://" or "asphalt://", treat it as a search query (Google)
+// • If the input is "asphalt://newtab", map to "browser.html".
 function normalizeURL(url) {
   if (!url || url.trim() === "") {
     return "browser.html";
@@ -25,7 +25,8 @@ function displayURL(url) {
 }
 
 // Create a new tab using an iframe.
-function createTab(url = "browser.html") {
+function createTab(url = "asphalt://newtab") {
+  // Normalize the URL (which maps "asphalt://newtab" to browser.html).
   const normalizedUrl = normalizeURL(url);
   const tabId = "tab-" + Date.now();
   
@@ -34,9 +35,9 @@ function createTab(url = "browser.html") {
   tabElem.className = "tab";
   tabElem.id = tabId;
   
-  // Default icon.
+  // Default icon: using a star instead of a compass.
   const iconElem = document.createElement("i");
-  iconElem.className = "fa fa-globe";
+  iconElem.className = "fa fa-star";
   tabElem.appendChild(iconElem);
   
   // Title element.
@@ -66,14 +67,14 @@ function createTab(url = "browser.html") {
   const iframe = document.createElement("iframe");
   iframe.src = normalizedUrl;
   iframe.id = "iframe-" + tabId;
-  // Start hidden (we’ll show it when this tab becomes active)
+  // Start hidden; show when this tab is active.
   iframe.style.opacity = 0;
   iframe.onload = function() {
     try {
       const doc = iframe.contentDocument || iframe.contentWindow.document;
       let title = doc.title || "New Tab";
       titleSpan.innerText = title;
-      // Attempt to update the icon from a favicon, if available.
+      // Attempt to update the icon from a favicon if available.
       const faviconLink = doc.querySelector("link[rel*='icon']");
       if (faviconLink && faviconLink.href) {
         iconElem.className = "";
@@ -87,7 +88,8 @@ function createTab(url = "browser.html") {
       console.log("Error updating tab title or favicon:", e);
     }
     if (activeTab && activeTab.id === tabId) {
-      document.getElementById("url-input").value = displayURL(iframe.src);
+      // Update the search input value to the display version of the URL.
+      document.querySelector(".input").value = displayURL(iframe.src);
       iframe.style.opacity = 1;
     }
   };
@@ -101,7 +103,7 @@ function createTab(url = "browser.html") {
   
   document.getElementById("browserContainer").appendChild(iframe);
   
-  // Set up a per‑tab history.
+  // Set up per‑tab history.
   const tabHistory = [normalizedUrl];
   let historyIndex = 0;
   
@@ -124,7 +126,7 @@ function switchTab(tabId) {
       tab.iframe.style.display = "block";
       tab.tabElem.classList.add("active");
       activeTab = tab;
-      document.getElementById("url-input").value = displayURL(tab.iframe.src);
+      document.querySelector(".input").value = displayURL(tab.iframe.src);
     } else {
       tab.iframe.style.display = "none";
       tab.tabElem.classList.remove("active");
@@ -145,7 +147,7 @@ function closeTab(tabId) {
         switchTab(tabs[0].id);
       } else {
         activeTab = null;
-        document.getElementById("url-input").value = "";
+        document.querySelector(".input").value = "";
       }
     }
   }
@@ -159,17 +161,17 @@ function navigate(url) {
   activeTab.history.push(normalizedUrl);
   activeTab.historyIndex++;
   activeTab.iframe.src = normalizedUrl;
-  document.getElementById("url-input").value = displayURL(normalizedUrl);
+  document.querySelector(".input").value = displayURL(normalizedUrl);
 }
 
-// Back, forward, and reload functions using the per‑tab history.
+// Back, forward, and reload functions using per‑tab history.
 function goBack() {
   if (!activeTab) return;
   if (activeTab.historyIndex > 0) {
     activeTab.historyIndex--;
     const url = activeTab.history[activeTab.historyIndex];
     activeTab.iframe.src = url;
-    document.getElementById("url-input").value = displayURL(url);
+    document.querySelector(".input").value = displayURL(url);
   }
 }
 function goForward() {
@@ -178,7 +180,7 @@ function goForward() {
     activeTab.historyIndex++;
     const url = activeTab.history[activeTab.historyIndex];
     activeTab.iframe.src = url;
-    document.getElementById("url-input").value = displayURL(url);
+    document.querySelector(".input").value = displayURL(url);
   }
 }
 function reloadPage() {
@@ -190,18 +192,37 @@ function reloadPage() {
 document.getElementById("back-btn").addEventListener("click", goBack);
 document.getElementById("forward-btn").addEventListener("click", goForward);
 document.getElementById("reload-btn").addEventListener("click", reloadPage);
-document.getElementById("go-btn").addEventListener("click", function() {
-  const url = document.getElementById("url-input").value;
-  navigate(url);
-});
-document.getElementById("url-input").addEventListener("keyup", function(e) {
-  if (e.key === "Enter") {
-    navigate(document.getElementById("url-input").value);
+
+// Set up the search bar using the provided code.
+document.addEventListener('DOMContentLoaded', () => {
+  const input = document.querySelector(".input");
+  input.addEventListener("keydown", handleInput);
+
+  function handleInput(e) {
+    if (e.key !== 'Enter') return;
+    // Format the search query.
+    const query = formatSearch(input.value);
+    // Instead of redirecting, update the active tab's iframe.
+    const finalUrl = __uv$config.prefix + __uv$config.encodeUrl(query);
+    navigate(finalUrl);
   }
 });
-document.getElementById("new-tab-button").addEventListener("click", function() {
-  createTab("browser.html");
-});
+
+// The provided formatSearch function.
+function formatSearch(query) {
+  try {
+    return new URL(query).toString();
+  } catch (e) { }
+  try {
+    const url = new URL(`http://${query}`);
+    if (url.hostname.includes('.')) return url.toString();
+  } catch (e) { }
+  return new URL(`https://google.com/search?q=${query}`).toString();
+}
+
+function Redir(url) {
+  window.location.href = url;
+}
 
 // Create the initial tab on page load.
-createTab("browser.html");
+createTab("asphalt://newtab");
