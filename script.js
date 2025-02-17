@@ -2,31 +2,38 @@
 let tabs = [];
 let activeTab = null;
 
-// Normalize user input URL:
-// – If empty, default to browser.html (displayed as asphalt://newtab)
-// – If not starting with http(s) or asphalt:// then assume a search query (Google used here)
-// – If input is "asphalt://newtab", map to browser.html.
+// Normalize input URL:
+//  - If empty, default to the new tab page ("browser.html")
+//  - If not starting with "http://" or "https://" or "asphalt://", treat as search query (Google)
+//  - "asphalt://newtab" maps to browser.html
 function normalizeURL(url) {
-  if (!url || url.trim() === "") {
-    return "browser.html";
-  }
+  url = url.trim();
+  if (!url) return "browser.html";
+  if (url.toLowerCase() === "asphalt://newtab") return "browser.html";
   if (!/^https?:\/\//i.test(url) && !/^asphalt:\/\//i.test(url)) {
+    // Treat input as a search query.
     return "https://www.google.com/search?q=" + encodeURIComponent(url);
-  }
-  if (url.toLowerCase() === "asphalt://newtab") {
-    return "browser.html";
   }
   return url;
 }
 
-// When displaying the URL in the address bar, convert "browser.html" to "asphalt://newtab"
+// When displaying URL in the address bar, convert "browser.html" to "asphalt://newtab"
 function displayURL(url) {
   return (url === "browser.html") ? "asphalt://newtab" : url;
+}
+
+// If __uv$config exists, encode URL using the proxy.
+function encodeURL(url) {
+  if (typeof __uv$config !== "undefined") {
+    return __uv$config.prefix + __uv$config.encodeUrl(url);
+  }
+  return url;
 }
 
 // Create a new tab with an embed element.
 function createTab(url = "browser.html") {
   const normalizedUrl = normalizeURL(url);
+  const encodedUrl = encodeURL(normalizedUrl);
   const tabId = "tab-" + Date.now();
   
   // Create the tab element.
@@ -34,9 +41,9 @@ function createTab(url = "browser.html") {
   tabElem.className = "tab";
   tabElem.id = tabId;
   
-  // Default icon element.
+  // Use a different default icon (e.g. window icon).
   const iconElem = document.createElement("i");
-  iconElem.className = "fa fa-globe";
+  iconElem.className = "fa-solid fa-window-maximize";
   tabElem.appendChild(iconElem);
   
   // Title element.
@@ -55,39 +62,37 @@ function createTab(url = "browser.html") {
   };
   tabElem.appendChild(closeBtn);
   
-  // Clicking the tab switches to it.
+  // Switch to this tab on click.
   tabElem.onclick = () => switchTab(tabId);
   
-  // Insert the tab element before the new-tab button.
+  // Insert the new tab before the new-tab button.
   const newTabButton = document.getElementById("new-tab-button");
   document.getElementById("tab-bar").insertBefore(tabElem, newTabButton);
   
   // Create the embed element.
   const embedElem = document.createElement("embed");
-  embedElem.src = normalizedUrl;
+  embedElem.src = encodedUrl;
   embedElem.type = "text/html";
   embedElem.id = "embed-" + tabId;
   embedElem.style.display = "none";
   
-  // Set up a simple per‑tab history.
-  const tabHistory = [normalizedUrl];
+  // Set up per‑tab history.
+  const tabHistory = [encodedUrl];
   let historyIndex = 0;
   
-  // When the embed loads, try to update the title and favicon.
-  // (Due to cross-origin restrictions this may not always work.)
+  // When the embed loads, attempt to update the tab title and icon.
   embedElem.addEventListener("load", function() {
     try {
-      // Attempt to get the loaded document.
+      // Accessing the embed's content may be blocked by cross-origin restrictions.
       const doc = embedElem.getSVGDocument ? embedElem.getSVGDocument() : embedElem.contentDocument;
       let title = doc ? doc.title : "New Tab";
-      if (!title || title.trim() === "") title = "New Tab";
-      titleSpan.innerText = title;
+      titleSpan.innerText = title || "New Tab";
       
-      // Attempt to update the icon from a favicon link.
-      let faviconLink = doc ? doc.querySelector("link[rel*='icon']") : null;
-      if (faviconLink && faviconLink.href) {
+      // Try to update the icon from a favicon link if available.
+      const favicon = doc ? doc.querySelector("link[rel*='icon']") : null;
+      if (favicon && favicon.href) {
         iconElem.className = "";
-        iconElem.style.backgroundImage = `url(${faviconLink.href})`;
+        iconElem.style.backgroundImage = `url(${favicon.href})`;
         iconElem.style.width = "16px";
         iconElem.style.height = "16px";
         iconElem.style.backgroundSize = "16px 16px";
@@ -97,7 +102,7 @@ function createTab(url = "browser.html") {
       console.log("Unable to update tab title or favicon:", e);
     }
     if (activeTab && activeTab.id === tabId) {
-      document.getElementById("url-input").value = displayURL(embedElem.src);
+      document.getElementById("url-input").value = displayURL(normalizedUrl);
     }
   });
   
@@ -121,6 +126,8 @@ function switchTab(tabId) {
       tab.embedElem.style.display = "block";
       tab.tabElem.classList.add("active");
       activeTab = tab;
+      // Update the URL bar.
+      // (Reconvert from proxied URL if needed.)
       document.getElementById("url-input").value = displayURL(tab.embedElem.src);
     } else {
       tab.embedElem.style.display = "none";
@@ -148,19 +155,20 @@ function closeTab(tabId) {
   }
 }
 
-// Navigate to a new URL in the active tab and update its history.
+// Navigate in the active tab using the outer search bar.
 function navigate(url) {
   if (!activeTab) return;
   const normalizedUrl = normalizeURL(url);
-  // Update history: drop any "forward" history then push new URL.
+  const encodedUrl = encodeURL(normalizedUrl);
+  // Update history (drop any forward history).
   activeTab.history = activeTab.history.slice(0, activeTab.historyIndex + 1);
-  activeTab.history.push(normalizedUrl);
+  activeTab.history.push(encodedUrl);
   activeTab.historyIndex++;
-  activeTab.embedElem.src = normalizedUrl;
+  activeTab.embedElem.src = encodedUrl;
   document.getElementById("url-input").value = displayURL(normalizedUrl);
 }
 
-// Back/forward/reload functions using tab history.
+// Back, forward, reload functions.
 function goBack() {
   if (!activeTab) return;
   if (activeTab.historyIndex > 0) {
@@ -184,13 +192,12 @@ function reloadPage() {
   activeTab.embedElem.src = activeTab.embedElem.src;
 }
 
-// Set up event listeners for navigation controls.
+// Event listeners for navigation controls.
 document.getElementById("back-btn").addEventListener("click", goBack);
 document.getElementById("forward-btn").addEventListener("click", goForward);
 document.getElementById("reload-btn").addEventListener("click", reloadPage);
 document.getElementById("go-btn").addEventListener("click", function() {
-  const url = document.getElementById("url-input").value;
-  navigate(url);
+  navigate(document.getElementById("url-input").value);
 });
 document.getElementById("url-input").addEventListener("keyup", function(e) {
   if (e.key === "Enter") {
@@ -201,5 +208,5 @@ document.getElementById("new-tab-button").addEventListener("click", function() {
   createTab("browser.html");
 });
 
-// Create the initial tab on load.
+// Create the initial tab on page load.
 createTab("browser.html");
