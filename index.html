@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <!-- Prevent zooming on mobile -->
+    <meta charset="UTF-8">
+    <!-- Prevent mobile zooming -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Asphalt Proxy - Chrome-Like Tabbed Browser</title>
-    <!-- Font Awesome CDN -->
+    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
       /* Global Styles */
@@ -14,8 +14,7 @@
         font-family: Arial, sans-serif;
         background-color: #f1f3f4;
       }
-      
-      /* --- Tab Bar (at the top) --- */
+      /* --- Tab Bar (at the very top) --- */
       #tab-bar {
         display: flex;
         align-items: center;
@@ -32,15 +31,13 @@
         background-color: #e0e0e0;
         border-radius: 4px 4px 0 0;
         cursor: pointer;
+        transition: background-color 0.3s, transform 0.3s;
+        transform: translateY(2px);
         position: relative;
-        /* Start hidden and scaled down */
-        opacity: 0;
-        transform: scale(0.9);
-        animation: tabEnter 0.3s forwards;
       }
       .tab.active {
         background-color: #fff;
-        transform: scale(1);
+        transform: translateY(0);
       }
       .tab:not(.active):hover {
         background-color: #d0d0d0;
@@ -54,11 +51,6 @@
         color: #666;
         cursor: pointer;
       }
-      @keyframes tabEnter {
-        to { opacity: 1; transform: scale(1); }
-      }
-      
-      /* New Tab Button */
       #new-tab-button {
         display: flex;
         align-items: center;
@@ -73,8 +65,7 @@
       #new-tab-button:hover {
         background-color: #d0d0d0;
       }
-      
-      /* --- Navigation/Search Bar (below the tabs) --- */
+      /* --- Navigation Bar (below tabs) --- */
       #nav-bar {
         display: flex;
         align-items: center;
@@ -86,24 +77,22 @@
         background: none;
         border: none;
         padding: 8px;
-        font-size: 18px;
+        font-size: 16px;
         color: #333;
         cursor: pointer;
       }
       #nav-bar input {
         flex: 1;
-        padding: 8px 10px;
+        padding: 6px 10px;
         margin: 0 8px;
         border: 1px solid #ccc;
         border-radius: 4px;
         font-size: 14px;
       }
-      
-      /* --- Browser Container (holds iframes) --- */
+      /* --- Browser Container (for iframes) --- */
       #browserContainer {
         width: 100%;
-        height: calc(100vh - 110px); /* Adjust height based on tab and nav bar */
-        background: #fff;
+        height: calc(100vh - 110px); /* Adjust based on tab and nav bar heights */
         position: relative;
       }
       #browserContainer iframe {
@@ -113,33 +102,27 @@
         position: absolute;
         top: 0;
         left: 0;
-        opacity: 0;
-        animation: fadeIn 0.5s forwards;
-      }
-      @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
+        transition: opacity 0.3s;
       }
     </style>
   </head>
   <body>
     <!-- Tab Bar -->
     <div id="tab-bar">
-      <!-- Tabs will be dynamically injected here -->
-      <div id="new-tab-button" title="New Tab"><i class="fa-solid fa-plus-square"></i></div>
+      <!-- Tabs will be injected here -->
+      <div id="new-tab-button" title="New Tab"><i class="fa fa-plus"></i></div>
     </div>
-    <!-- Navigation/Search Bar -->
+    <!-- Navigation Bar -->
     <div id="nav-bar">
-      <button id="back-btn" title="Back"><i class="fa-solid fa-chevron-left"></i></button>
-      <button id="forward-btn" title="Forward"><i class="fa-solid fa-chevron-right"></i></button>
-      <button id="reload-btn" title="Reload"><i class="fa-solid fa-arrows-rotate"></i></button>
-      <input type="text" id="url-input" placeholder="Enter a search query or URL">
-      <button id="go-btn" title="Go"><i class="fa-solid fa-paper-plane"></i></button>
+      <button id="back-btn" title="Back"><i class="fa fa-arrow-left"></i></button>
+      <button id="forward-btn" title="Forward"><i class="fa fa-arrow-right"></i></button>
+      <button id="reload-btn" title="Reload"><i class="fa fa-sync"></i></button>
+      <input type="text" id="url-input" placeholder="Enter URL">
+      <button id="go-btn" title="Go"><i class="fa fa-search"></i></button>
     </div>
     <!-- Browser Container -->
     <div id="browserContainer"></div>
     
-    <!-- Main Script for Tab Management -->
     <script src="script.js"></script>
   </body>
 </html>
