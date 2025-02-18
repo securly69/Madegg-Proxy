@@ -327,16 +327,37 @@
         <h1>MadEgg Proxy</h1>
         <div class="time-date" id="time-date"></div>
         <div class="search-container">
-          <input type="text" class="input" placeholder="Enter a search query or URL" id="searchInput">
-        </div>
-        
-        <script>
-          document.getElementById("searchInput").addEventListener("keydown", function(event) {
-            if (event.key === "Enter") {
-              go(this.value);
-            }
-          });
-        </script>
+  <input type="text" class="input" placeholder="Enter a search query or URL" id="searchInput">
+</div>
+
+<script>
+  function isValidURL(string) {
+    try {
+      new URL(string);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function processInput(input) {
+    input = input.trim();
+    if (isValidURL(input)) {
+      return input; // Already a valid URL
+    } else if (input.includes(".") && !input.includes(" ")) {
+      return "https://" + input; // Likely a domain, add https://
+    } else {
+      return "https://www.google.com/search?q=" + encodeURIComponent(input); // Treat as a search query
+    }
+  }
+
+  document.getElementById("searchInput").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+      go(processInput(this.value));
+    }
+  });
+</script>
+
         <div class="bookmarks" id="bookmarks" style="margin-top:15px !important;">
           <a href="javascript:void(0)" class="bookmark" onclick="go('https://www.youtube.com')">
             <img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" alt="YouTube">
