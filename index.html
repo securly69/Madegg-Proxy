@@ -6,17 +6,6 @@
     <title>Asphalt Proxy - Tabbed Browser</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-      #browser-frame {
-        width: 100%;
-        height: 100%;
-        border: none;
-        background: white;
-        display: none;
-      }
-      #newtab-content {
-        width: 100%;
-        height: 100%;
-      }
       html, body {
         margin: 0;
         height: 100%;
@@ -46,6 +35,10 @@
         transition: background-color 0.3s, transform 0.3s;
         transform: translateY(2px);
         position: relative;
+        max-width: 200px;
+        min-width: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
       .tab.active {
         background-color: #fff;
@@ -95,6 +88,8 @@
       .search-container {
         flex: 1;
         margin-left: 10px;
+        display: flex;
+        gap: 8px;
       }
       .search-container .input {
         width: 100%;
@@ -102,6 +97,13 @@
         border: 1px solid #ccc;
         border-radius: 4px;
         font-size: 14px;
+      }
+      .go-button {
+        background: transparent;
+        border: none;
+        color: #333;
+        cursor: pointer;
+        padding: 0 12px;
       }
       #browserContainer {
         flex: 1;
@@ -310,10 +312,23 @@
           backdrop-filter: blur(1px);
         }
       }
+      .tabs-container {
+        display: flex;
+        flex-grow: 1;
+        overflow-x: auto;
+      }
+      .browser-frame {
+        width: 100%;
+        height: 100%;
+        border: none;
+        background: transparent;
+        display: none;
+      }
     </style>
   </head>
   <body>
     <div id="tab-bar">
+      <div class="tabs-container" id="tabs-container"></div>
       <div id="new-tab-button" title="New Tab"><i class="fa fa-plus"></i></div>
     </div>
 
@@ -323,53 +338,51 @@
       <button id="reload-btn" title="Reload"><i class="fa fa-sync"></i></button>
       <div class="search-container">
         <input type="text" class="input" placeholder="Enter a search query or URL" id="searchInput">
+        <button class="go-button" id="go-button"><i class="fa fa-paper-plane"></i></button>
       </div>
     </div>
 
     <div id="browserContainer">
-      <div id="newtab-content">
-        <div class="top-right-menu">
-          <button class="menu-button" onclick="SHS()">Search History Spammer</button>
+      <div class="top-right-menu">
+        <button class="menu-button" onclick="SHS()">Search History Spammer</button>
+      </div>
+      <div class="top-left-menu">
+        <button class="menu-button" onclick="AB()">About:blank Cloaker</button>
+      </div>
+      
+      <div id="content">
+        <h1>MadEgg Proxy</h1>
+        <div class="time-date" id="time-date"></div>
+        <div class="search-container">
+          <input type="text" class="input" placeholder="Enter a search query or URL" id="searchInputNewtab">
         </div>
-        <div class="top-left-menu">
-          <button class="menu-button" onclick="AB()">About:blank Cloaker</button>
-        </div>
-        
-        <div id="content">
-          <h1>MadEgg Proxy</h1>
-          <div class="time-date" id="time-date"></div>
-          <div class="search-container">
-            <input type="text" class="input" placeholder="Enter a search query or URL" id="searchInputNewtab">
-          </div>
 
-          <div class="bookmarks" id="bookmarks" style="margin-top:15px !important;">
-            <a href="javascript:void(0)" class="bookmark" onclick="go('https://www.youtube.com')">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" alt="YouTube">
-              <span>YouTube</span>
-            </a>
-            <a href="javascript:void(0)" class="bookmark" onclick="go('https://twitter.com')">
-              <img src="https://cdn.freebiesupply.com/logos/large/2x/twitter-3-logo-png-transparent.png" alt="Twitter">
-              <span>Twitter</span>
-            </a>
-            <a href="javascript:void(0)" class="bookmark" onclick="go('https://discord.com')">
-              <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png" alt="Discord">
-              <span>Discord</span>
-            </a>
-            <a href="javascript:void(0)" class="bookmark" onclick="go('https://www.nvidia.com/en-us/geforce-now/')">
-              <img src="https://www.nesabamedia.com/wp-content/uploads/2022/06/GeForce-NOW-Logo-1.png" alt="GeForce Now">
-              <span>GeForce Now</span>
-            </a>
-            <div class="add-bookmark" id="add-bookmark">+ Add Bookmark</div>
-          </div>
-          <div class="rotating-text" id="rotating-text"></div>
-          <div class="add-bookmark-modal" id="add-bookmark-modal">
-            <input type="text" id="bookmark-name" placeholder="Bookmark Name">
-            <input type="text" id="bookmark-url" placeholder="Bookmark URL">
-            <button id="save-bookmark">Save</button>
-          </div>
+        <div class="bookmarks" id="bookmarks" style="margin-top:15px !important;">
+          <a href="javascript:void(0)" class="bookmark" onclick="go('https://www.youtube.com')">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" alt="YouTube">
+            <span>YouTube</span>
+          </a>
+          <a href="javascript:void(0)" class="bookmark" onclick="go('https://twitter.com')">
+            <img src="https://cdn.freebiesupply.com/logos/large/2x/twitter-3-logo-png-transparent.png" alt="Twitter">
+            <span>Twitter</span>
+          </a>
+          <a href="javascript:void(0)" class="bookmark" onclick="go('https://discord.com')">
+            <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png" alt="Discord">
+            <span>Discord</span>
+          </a>
+          <a href="javascript:void(0)" class="bookmark" onclick="go('https://www.nvidia.com/en-us/geforce-now/')">
+            <img src="https://www.nesabamedia.com/wp-content/uploads/2022/06/GeForce-NOW-Logo-1.png" alt="GeForce Now">
+            <span>GeForce Now</span>
+          </a>
+          <div class="add-bookmark" id="add-bookmark">+ Add Bookmark</div>
+        </div>
+        <div class="rotating-text" id="rotating-text"></div>
+        <div class="add-bookmark-modal" id="add-bookmark-modal">
+          <input type="text" id="bookmark-name" placeholder="Bookmark Name">
+          <input type="text" id="bookmark-url" placeholder="Bookmark URL">
+          <button id="save-bookmark">Save</button>
         </div>
       </div>
-      <iframe id="browser-frame"></iframe>
     </div>
 
     <script src="./uv/uv.bundle.js"></script>
@@ -385,43 +398,103 @@
       setInterval(updateTimeDate, 1000);
       updateTimeDate();
 
-      function go(url) {
-        const newtabContent = document.getElementById('newtab-content');
-        const browserFrame = document.getElementById('browser-frame');
-        const searchInput = document.getElementById('searchInput');
+      class Tab {
+        constructor() {
+          this.element = document.createElement('div');
+          this.element.className = 'tab';
+          this.element.innerHTML = `
+            <span>New Tab</span>
+            <div class="close-tab"><i class="fa fa-times"></i></div>
+          `;
+          this.iframe = document.createElement('iframe');
+          this.iframe.className = 'browser-frame';
+          this.iframe.style.display = 'none';
+          document.body.appendChild(this.iframe);
+          
+          this.element.querySelector('.close-tab').addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.close();
+          });
+          
+          this.element.addEventListener('click', () => this.activate());
+        }
 
-        if (url === 'asphalt://newtab') {
-          newtabContent.style.display = 'block';
-          browserFrame.style.display = 'none';
-          searchInput.value = 'asphalt://newtab';
-        } else {
-          newtabContent.style.display = 'none';
-          browserFrame.style.display = 'block';
-          const processedUrl = `https://asphalt-nine.vercel.app/${__uv$config.prefix}${__uv$config.encodeUrl(url)}`;
-          browserFrame.src = processedUrl;
-          searchInput.value = url;
+        activate() {
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.browser-frame').forEach(f => f.style.display = 'none');
+          this.element.classList.add('active');
+          this.iframe.style.display = 'block';
+          document.getElementById('searchInput').value = this.url || 'asphalt://newtab';
+        }
+
+        close() {
+          if(document.querySelector('.tab.active') === this.element) {
+            const nextTab = this.element.previousElementSibling || this.element.nextElementSibling;
+            if(nextTab) nextTab.click();
+          }
+          this.element.remove();
+          this.iframe.remove();
+        }
+
+        navigate(url) {
+          this.url = url;
+          this.element.querySelector('span').textContent = url === 'asphalt://newtab' ? 'New Tab' : 
+            url.replace(/^https?:\/\//, '').substring(0, 20);
+          if(url === 'asphalt://newtab') {
+            this.iframe.style.display = 'none';
+          } else {
+            this.iframe.style.display = 'block';
+            this.iframe.src = `https://asphalt-nine.vercel.app/${__uv$config.prefix}${__uv$config.encodeUrl(url)}`;
+          }
         }
       }
 
-      document.getElementById("searchInput").addEventListener("keydown", function(event) {
-        if (event.key === "Enter") {
-          const input = event.target.value.trim();
-          if (input === 'asphalt://newtab') {
-            go('asphalt://newtab');
-            return;
-          }
-          let finalUrl;
-          try {
-            new URL(input);
-            finalUrl = input;
-          } catch (_) {
-            if (input.includes('.') && !input.includes(' ')) {
-              finalUrl = `https://${input}`;
-            } else {
-              finalUrl = `https://www.google.com/search?q=${encodeURIComponent(input)}`;
-            }
-          }
-          go(finalUrl);
+      let tabs = [];
+      let currentTab = null;
+
+      document.getElementById('new-tab-button').addEventListener('click', () => {
+        const tab = new Tab();
+        tabs.push(tab);
+        document.getElementById('tabs-container').appendChild(tab.element);
+        tab.activate();
+        currentTab = tab;
+        tab.navigate('asphalt://newtab');
+      });
+
+      document.getElementById('go-button').addEventListener('click', handleNavigation);
+      document.getElementById('searchInput').addEventListener('keydown', (e) => {
+        if(e.key === 'Enter') handleNavigation();
+      });
+
+      function handleNavigation() {
+        const input = document.getElementById('searchInput').value.trim();
+        const finalUrl = input === 'asphalt://newtab' ? input :
+          isValidURL(input) ? input :
+          input.includes('.') && !input.includes(' ') ? `https://${input}` :
+          `https://www.google.com/search?q=${encodeURIComponent(input)}`;
+        
+        currentTab.navigate(finalUrl);
+      }
+
+      function isValidURL(str) {
+        try { new URL(str); return true; } catch(_) { return false; }
+      }
+
+      document.getElementById('back-btn').addEventListener('click', () => {
+        if(currentTab && currentTab.iframe.contentWindow) {
+          currentTab.iframe.contentWindow.history.back();
+        }
+      });
+
+      document.getElementById('forward-btn').addEventListener('click', () => {
+        if(currentTab && currentTab.iframe.contentWindow) {
+          currentTab.iframe.contentWindow.history.forward();
+        }
+      });
+
+      document.getElementById('reload-btn').addEventListener('click', () => {
+        if(currentTab && currentTab.iframe.contentWindow) {
+          currentTab.iframe.contentWindow.location.reload();
         }
       });
 
@@ -493,9 +566,7 @@
       }
       type();
 
-      document.addEventListener("DOMContentLoaded", () => {
-        document.getElementById('searchInput').value = 'asphalt://newtab';
-      });
+      document.getElementById('new-tab-button').click();
     </script>
   </body>
 </html>
