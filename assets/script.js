@@ -1,21 +1,32 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const browserContainer = document.querySelector(".browserContainer");
+  const input = document.querySelector(".input");
 
-  // Delegate the event to the container that holds the input
-  browserContainer.addEventListener("keydown", (e) => {
-    if (e.target && e.target.classList.contains("input") && e.key === "Enter") {
-      handleInput(e.target);
-    }
-  });
-
-  function handleInput(input) {
-    // Run the formatSearch function on the current value of the input
-    const query = formatSearch(input.value);
-
-    // Redirect to [uv prefix] + [encoded search query]
-    window.location.href = __uv$config.prefix + __uv$config.encodeUrl(query);
+  // Ensure that the input element is selected after DOM load
+  if (input) {
+    input.addEventListener("keydown", function handleInput(e) {
+      // Only proceed if the Enter key is pressed
+      if (e.key === 'Enter') {
+        const query = formatSearch(input.value);
+        // Redirect with the formatted search query
+        window.location.href = __uv$config.prefix + __uv$config.encodeUrl(query);
+      }
+    });
+  } else {
+    // In case the input is not found (this ensures we have proper fallbacks)
+    setTimeout(() => {
+      const input = document.querySelector(".input");
+      if (input) {
+        input.addEventListener("keydown", function handleInput(e) {
+          if (e.key === 'Enter') {
+            const query = formatSearch(input.value);
+            window.location.href = __uv$config.prefix + __uv$config.encodeUrl(query);
+          }
+        });
+      }
+    }, 500); // Retry after 500ms if not initially found
   }
 });
+
 
 
 function formatSearch(query) {
