@@ -1,22 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Ensure we're selecting the input inside the new structure
-  const input = document.querySelector(".browserContainer .content .search-container .input");
+  const browserContainer = document.querySelector(".browserContainer");
 
-  if (input) {
-    input.addEventListener("keydown", handleInput);
-
-    function handleInput(e) {
-      // Only run the function if the Enter key is pressed
-      if (e.key !== 'Enter') return;
-
-      // Run the formatSearch function on the current value of the input
-      const query = formatSearch(input.value);
-
-      // Redirect to [uv prefix] + [encoded search query]
-      window.location.href = __uv$config.prefix + __uv$config.encodeUrl(query);
+  // Delegate the event to the container that holds the input
+  browserContainer.addEventListener("keydown", (e) => {
+    if (e.target && e.target.classList.contains("input") && e.key === "Enter") {
+      handleInput(e.target);
     }
+  });
+
+  function handleInput(input) {
+    // Run the formatSearch function on the current value of the input
+    const query = formatSearch(input.value);
+
+    // Redirect to [uv prefix] + [encoded search query]
+    window.location.href = __uv$config.prefix + __uv$config.encodeUrl(query);
   }
 });
+
 
 function formatSearch(query) {
   // This function turns the inputted value into a Google search if it's not a normal URL
