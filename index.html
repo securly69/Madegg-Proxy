@@ -6,6 +6,17 @@
     <title>Asphalt Proxy - Tabbed Browser</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+      #browser-frame {
+        width: 100%;
+        height: 100%;
+        border: none;
+        background: white;
+        display: none;
+      }
+      #newtab-content {
+        width: 100%;
+        height: 100%;
+      }
       html, body {
         margin: 0;
         height: 100%;
@@ -311,86 +322,60 @@
       <button id="forward-btn" title="Forward"><i class="fa fa-arrow-right"></i></button>
       <button id="reload-btn" title="Reload"><i class="fa fa-sync"></i></button>
       <div class="search-container">
-        <input type="text" class="input" placeholder="Enter a search query or URL">
+        <input type="text" class="input" placeholder="Enter a search query or URL" id="searchInput">
       </div>
     </div>
 
     <div id="browserContainer">
-      <div class="top-right-menu">
-        <button class="menu-button" onclick="SHS()">Search History Spammer</button>
-      </div>
-      <div class="top-left-menu">
-        <button class="menu-button" onclick="AB()">About:blank Cloaker</button>
-      </div>
-      
-      <div id="content">
-        <h1>MadEgg Proxy</h1>
-        <div class="time-date" id="time-date"></div>
-        <div class="search-container">
-  <input type="text" class="input" placeholder="Enter a search query or URL" id="searchInput">
-</div>
-
-<script>
-  function isValidURL(string) {
-    try {
-      new URL(string);
-      return true;
-    } catch (_) {
-      return false;
-    }
-  }
-
-  function processInput(input) {
-    input = input.trim();
-    if (isValidURL(input)) {
-      return input; // Already a valid URL
-    } else if (input.includes(".") && !input.includes(" ")) {
-      return "https://" + input; // Likely a domain, add https://
-    } else {
-      return "https://www.google.com/search?q=" + encodeURIComponent(input); // Treat as a search query
-    }
-  }
-
-  document.getElementById("searchInput").addEventListener("keydown", function(event) {
-    if (event.key === "Enter") {
-      go(processInput(this.value));
-    }
-  });
-</script>
-
-        <div class="bookmarks" id="bookmarks" style="margin-top:15px !important;">
-          <a href="javascript:void(0)" class="bookmark" onclick="go('https://www.youtube.com')">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" alt="YouTube">
-            <span>YouTube</span>
-          </a>
-          <a href="javascript:void(0)" class="bookmark" onclick="go('https://twitter.com')">
-            <img src="https://cdn.freebiesupply.com/logos/large/2x/twitter-3-logo-png-transparent.png" alt="Twitter">
-            <span>Twitter</span>
-          </a>
-          <a href="javascript:void(0)" class="bookmark" onclick="go('https://discord.com')">
-            <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png" alt="Discord">
-            <span>Discord</span>
-          </a>
-          <a href="javascript:void(0)" class="bookmark" onclick="go('https://www.nvidia.com/en-us/geforce-now/')">
-            <img src="https://www.nesabamedia.com/wp-content/uploads/2022/06/GeForce-NOW-Logo-1.png" alt="GeForce Now">
-            <span>GeForce Now</span>
-          </a>
-          <div class="add-bookmark" id="add-bookmark">+ Add Bookmark</div>
+      <div id="newtab-content">
+        <div class="top-right-menu">
+          <button class="menu-button" onclick="SHS()">Search History Spammer</button>
         </div>
-        <div class="rotating-text" id="rotating-text"></div>
-        <div class="add-bookmark-modal" id="add-bookmark-modal">
-          <input type="text" id="bookmark-name" placeholder="Bookmark Name">
-          <input type="text" id="bookmark-url" placeholder="Bookmark URL">
-          <button id="save-bookmark">Save</button>
+        <div class="top-left-menu">
+          <button class="menu-button" onclick="AB()">About:blank Cloaker</button>
+        </div>
+        
+        <div id="content">
+          <h1>MadEgg Proxy</h1>
+          <div class="time-date" id="time-date"></div>
+          <div class="search-container">
+            <input type="text" class="input" placeholder="Enter a search query or URL" id="searchInputNewtab">
+          </div>
+
+          <div class="bookmarks" id="bookmarks" style="margin-top:15px !important;">
+            <a href="javascript:void(0)" class="bookmark" onclick="go('https://www.youtube.com')">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" alt="YouTube">
+              <span>YouTube</span>
+            </a>
+            <a href="javascript:void(0)" class="bookmark" onclick="go('https://twitter.com')">
+              <img src="https://cdn.freebiesupply.com/logos/large/2x/twitter-3-logo-png-transparent.png" alt="Twitter">
+              <span>Twitter</span>
+            </a>
+            <a href="javascript:void(0)" class="bookmark" onclick="go('https://discord.com')">
+              <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png" alt="Discord">
+              <span>Discord</span>
+            </a>
+            <a href="javascript:void(0)" class="bookmark" onclick="go('https://www.nvidia.com/en-us/geforce-now/')">
+              <img src="https://www.nesabamedia.com/wp-content/uploads/2022/06/GeForce-NOW-Logo-1.png" alt="GeForce Now">
+              <span>GeForce Now</span>
+            </a>
+            <div class="add-bookmark" id="add-bookmark">+ Add Bookmark</div>
+          </div>
+          <div class="rotating-text" id="rotating-text"></div>
+          <div class="add-bookmark-modal" id="add-bookmark-modal">
+            <input type="text" id="bookmark-name" placeholder="Bookmark Name">
+            <input type="text" id="bookmark-url" placeholder="Bookmark URL">
+            <button id="save-bookmark">Save</button>
+          </div>
         </div>
       </div>
+      <iframe id="browser-frame"></iframe>
     </div>
 
     <script src="./uv/uv.bundle.js"></script>
     <script src="./uv/uv.config.js"></script>
     <script src="./assets/register-sw.js"></script>
     <script src="./assets/script.js"></script>
-    <script src="./script.js"></script>
     <script>
       function updateTimeDate() {
         const date = new Date();
@@ -401,8 +386,44 @@
       updateTimeDate();
 
       function go(url) {
-        window.location.href = __uv$config.prefix + __uv$config.encodeUrl(url);
+        const newtabContent = document.getElementById('newtab-content');
+        const browserFrame = document.getElementById('browser-frame');
+        const searchInput = document.getElementById('searchInput');
+
+        if (url === 'asphalt://newtab') {
+          newtabContent.style.display = 'block';
+          browserFrame.style.display = 'none';
+          searchInput.value = 'asphalt://newtab';
+        } else {
+          newtabContent.style.display = 'none';
+          browserFrame.style.display = 'block';
+          const processedUrl = `https://asphalt-nine.vercel.app/${__uv$config.prefix}${__uv$config.encodeUrl(url)}`;
+          browserFrame.src = processedUrl;
+          searchInput.value = url;
+        }
       }
+
+      document.getElementById("searchInput").addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+          const input = event.target.value.trim();
+          if (input === 'asphalt://newtab') {
+            go('asphalt://newtab');
+            return;
+          }
+          let finalUrl;
+          try {
+            new URL(input);
+            finalUrl = input;
+          } catch (_) {
+            if (input.includes('.') && !input.includes(' ')) {
+              finalUrl = `https://${input}`;
+            } else {
+              finalUrl = `https://www.google.com/search?q=${encodeURIComponent(input)}`;
+            }
+          }
+          go(finalUrl);
+        }
+      });
 
       const addBookmarkButton = document.getElementById('add-bookmark');
       const addBookmarkModal = document.getElementById('add-bookmark-modal');
@@ -471,6 +492,10 @@
         }
       }
       type();
+
+      document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById('searchInput').value = 'asphalt://newtab';
+      });
     </script>
   </body>
 </html>
