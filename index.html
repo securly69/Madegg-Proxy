@@ -2,19 +2,20 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <!-- Prevent mobile zooming -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asphalt Proxy - Tabbed Browser</title>
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-      /* --- Existing Styles from index.html --- */
-      body {
+      html, body {
         margin: 0;
+        height: 100%;
         font-family: Arial, sans-serif;
         background-color: #f1f3f4;
       }
-      /* Tab Bar */
+      body {
+        display: flex;
+        flex-direction: column;
+      }
       #tab-bar {
         display: flex;
         align-items: center;
@@ -65,7 +66,6 @@
       #new-tab-button:hover {
         background-color: #d0d0d0;
       }
-      /* Navigation Bar */
       #nav-bar {
         display: flex;
         align-items: center;
@@ -92,31 +92,35 @@
         border-radius: 4px;
         font-size: 14px;
       }
-      /* Browser Container */
       #browserContainer {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
         width: 100%;
-        height: calc(100vh - 110px);
         position: relative;
-      }
-      
-      /* --- Styles from browser.html --- */
-      #browserContainer {
         font-family: "Futura", Futura, serif;
         background: url('https://cdn.dribbble.com/users/234525/screenshots/5853076/eggsacrosstheuniverse.jpg') no-repeat center center fixed;
         background-size: cover;
         display: flex;
         flex-direction: column;
-        justify-content: center;
         align-items: center;
         color: white;
-        overflow: hidden;
         padding: 10px;
+        box-sizing: border-box;
+      }
+      #content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: 100%;
+        max-width: 800px;
+        margin: 120px auto 0;
       }
       #browserContainer h1 {
         font-size: 2.2rem;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
         text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
-        text-align: center;
         transition: transform 0.3s ease;
       }
       #browserContainer h1:hover {
@@ -124,7 +128,7 @@
       }
       #browserContainer .time-date {
         font-size: 1.2rem;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
         text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
         transition: transform 0.3s ease;
       }
@@ -134,8 +138,7 @@
       #browserContainer .search-container {
         width: 80%;
         max-width: 600px;
-        text-align: center;
-        margin-bottom: 20px;
+        margin: 0 auto 15px;
       }
       #browserContainer .input {
         font-family: "Futura", Futura, serif;
@@ -158,7 +161,6 @@
         background: rgba(255, 255, 255, 0.3);
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
       }
-      /* Adjusted gap between search bar and bookmarks */
       #browserContainer .bookmarks {
         display: flex;
         justify-content: center;
@@ -167,44 +169,26 @@
         opacity: 0;
         animation: enterBookmarks 1s forwards 0.5s;
         width: 100%;
-        max-width: 800px;
-        text-align: center;
-        position: relative;
-        margin-top: 15px;
+        margin-top: 15px !important;
       }
-      #browserContainer .bookmark {
+      #browserContainer .bookmark,
+      #browserContainer .add-bookmark {
         margin-bottom: 20px;
         display: flex;
         flex-direction: column;
         align-items: center;
-        text-decoration: none;
-        color: white;
-        background: rgba(255, 255, 255, 0.2);
         padding: 10px;
         border-radius: 15px;
         width: 120px;
         height: 120px;
-        text-align: center;
+        background: rgba(255, 255, 255, 0.2);
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+        transition: transform 0.3s ease, background 0.3s ease;
         backdrop-filter: blur(10px);
       }
-      #browserContainer .bookmark img {
-        margin: auto;
-        height: 40px;
-        width: auto;
-        transition: transform 0.3s ease;
-      }
-      #browserContainer .bookmark span {
-        font-size: 0.9rem;
-        margin: auto;
-      }
-      #browserContainer .bookmark:hover {
-        transform: scale(1.05);
-        background: rgba(255, 255, 255, 0.3);
-      }
-      #browserContainer .bookmark img:hover {
-        transform: rotate(10deg) scale(1.1);
+      #browserContainer .bookmark {
+        text-decoration: none;
+        color: white;
       }
       #browserContainer .add-bookmark {
         display: flex;
@@ -223,9 +207,23 @@
         width: 120px;
         height: 120px;
       }
+      #browserContainer .bookmark img {
+        margin: auto;
+        height: 40px;
+        width: auto;
+        transition: transform 0.3s ease;
+      }
+      #browserContainer .bookmark span {
+        font-size: 0.9rem;
+        margin: auto;
+      }
+      #browserContainer .bookmark:hover,
       #browserContainer .add-bookmark:hover {
+        transform: scale(1.05);
         background: rgba(255, 255, 255, 0.3);
-        transform: scale(1.1);
+      }
+      #browserContainer .bookmark img:hover {
+        transform: rotate(10deg) scale(1.1);
       }
       #browserContainer .add-bookmark-modal {
         position: fixed;
@@ -240,12 +238,14 @@
         flex-direction: column;
         gap: 10px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        width: 300px;
       }
       #browserContainer .add-bookmark-modal input {
-        padding: 10px;
+        padding: 10px 15px;
         border-radius: 5px;
         border: none;
         width: 100%;
+        box-sizing: border-box;
       }
       #browserContainer .add-bookmark-modal button {
         padding: 10px;
@@ -259,7 +259,8 @@
       #browserContainer .add-bookmark-modal button:hover {
         background: #3e81e6;
       }
-      #browserContainer .top-right-menu, #browserContainer .top-left-menu {
+      #browserContainer .top-right-menu,
+      #browserContainer .top-left-menu {
         position: absolute;
         top: 10px;
       }
@@ -289,7 +290,7 @@
         font-size: 1.5rem;
         color: white;
         text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
-        margin-top: 20px;
+        margin-top: 10px;
         min-height: 2em;
       }
       @keyframes enterBookmarks {
@@ -301,11 +302,10 @@
     </style>
   </head>
   <body>
-    <!-- Tab Bar -->
     <div id="tab-bar">
       <div id="new-tab-button" title="New Tab"><i class="fa fa-plus"></i></div>
     </div>
-    <!-- Navigation Bar -->
+
     <div id="nav-bar">
       <button id="back-btn" title="Back"><i class="fa fa-arrow-left"></i></button>
       <button id="forward-btn" title="Forward"><i class="fa fa-arrow-right"></i></button>
@@ -314,54 +314,55 @@
         <input type="text" class="input" placeholder="Enter a search query or URL">
       </div>
     </div>
-    <!-- Browser Container -->
+
     <div id="browserContainer">
-      <h1>MadEgg Proxy</h1>
       <div class="top-right-menu">
         <button class="menu-button" onclick="SHS()">Search History Spammer</button>
       </div>
       <div class="top-left-menu">
         <button class="menu-button" onclick="AB()">About:blank Cloaker</button>
       </div>
-      <div class="time-date" id="time-date"></div>
-      <div class="search-container">
-        <input type="text" class="input" placeholder="Enter a search query or URL">
-      </div>
-      <div class="bookmarks" id="bookmarks">
-        <a href="javascript:void(0)" class="bookmark" onclick="navigateBookmark('https://www.youtube.com')">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" alt="YouTube">
-          <span>YouTube</span>
-        </a>
-        <a href="javascript:void(0)" class="bookmark" onclick="navigateBookmark('https://twitter.com')">
-          <img src="https://cdn.freebiesupply.com/logos/large/2x/twitter-3-logo-png-transparent.png" alt="Twitter">
-          <span>Twitter</span>
-        </a>
-        <a href="javascript:void(0)" class="bookmark" onclick="navigateBookmark('https://discord.com')">
-          <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png" alt="Discord">
-          <span>Discord</span>
-        </a>
-        <a href="javascript:void(0)" class="bookmark" onclick="navigateBookmark('https://www.nvidia.com/en-us/geforce-now/')">
-          <img src="https://www.nesabamedia.com/wp-content/uploads/2022/06/GeForce-NOW-Logo-1.png" alt="GeForce Now">
-          <span>GeForce Now</span>
-        </a>
-        <div class="add-bookmark" id="add-bookmark">+ Add Bookmark</div>
-      </div>
-      <div class="rotating-text" id="rotating-text"></div>
-      <div class="add-bookmark-modal" id="add-bookmark-modal">
-        <input type="text" id="bookmark-name" placeholder="Bookmark Name">
-        <input type="text" id="bookmark-url" placeholder="Bookmark URL">
-        <button id="save-bookmark">Save</button>
+      
+      <div id="content">
+        <h1>MadEgg Proxy</h1>
+        <div class="time-date" id="time-date"></div>
+        <div class="search-container">
+          <input type="text" class="input" placeholder="Enter a search query or URL">
+        </div>
+        <div class="bookmarks" id="bookmarks" style="margin-top:15px !important;">
+          <a href="javascript:void(0)" class="bookmark" onclick="navigateBookmark('https://www.youtube.com')">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" alt="YouTube">
+            <span>YouTube</span>
+          </a>
+          <a href="javascript:void(0)" class="bookmark" onclick="navigateBookmark('https://twitter.com')">
+            <img src="https://cdn.freebiesupply.com/logos/large/2x/twitter-3-logo-png-transparent.png" alt="Twitter">
+            <span>Twitter</span>
+          </a>
+          <a href="javascript:void(0)" class="bookmark" onclick="navigateBookmark('https://discord.com')">
+            <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png" alt="Discord">
+            <span>Discord</span>
+          </a>
+          <a href="javascript:void(0)" class="bookmark" onclick="navigateBookmark('https://www.nvidia.com/en-us/geforce-now/')">
+            <img src="https://www.nesabamedia.com/wp-content/uploads/2022/06/GeForce-NOW-Logo-1.png" alt="GeForce Now">
+            <span>GeForce Now</span>
+          </a>
+          <div class="add-bookmark" id="add-bookmark">+ Add Bookmark</div>
+        </div>
+        <div class="rotating-text" id="rotating-text"></div>
+        <div class="add-bookmark-modal" id="add-bookmark-modal">
+          <input type="text" id="bookmark-name" placeholder="Bookmark Name">
+          <input type="text" id="bookmark-url" placeholder="Bookmark URL">
+          <button id="save-bookmark">Save</button>
+        </div>
       </div>
     </div>
 
-    <!-- Include external scripts -->
     <script src="./uv/uv.bundle.js"></script>
     <script src="./uv/uv.config.js"></script>
     <script src="./assets/register-sw.js"></script>
     <script src="./assets/script.js"></script>
     <script src="./script.js"></script>
     <script>
-      // JavaScript from browser.html
       function updateTimeDate() {
         const date = new Date();
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
@@ -386,23 +387,18 @@
       saveBookmarkButton.addEventListener('click', () => {
         const name = document.getElementById('bookmark-name').value;
         const url = document.getElementById('bookmark-url').value;
-
         if (name && url) {
           const link = document.createElement('a');
           link.href = '#';
           link.className = 'bookmark';
-
           const img = document.createElement('img');
           img.src = `https://www.google.com/s2/favicons?sz=64&domain_url=${encodeURIComponent(url)}`;
           img.alt = name;
           link.appendChild(img);
-
           const span = document.createElement('span');
           span.textContent = name;
           link.appendChild(span);
-
           link.addEventListener('click', () => { navigateBookmark(url); });
-
           bookmarksContainer.insertBefore(link, addBookmarkButton);
           addBookmarkModal.style.display = 'none';
         }
@@ -422,7 +418,6 @@
       let isDeleting = false;
       const typingSpeed = 100;
       const pauseBetween = 2000;
-
       function type() {
         let currentMessage = messages[currentMessageIndex];
         if (isDeleting) {
