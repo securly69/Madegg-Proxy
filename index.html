@@ -1,607 +1,662 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Asphalt Proxy - Tabbed Browser</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Futura&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      font-family: 'IBM Plex Sans', sans-serif;
-      background: #f0f0f0;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    #browser {
-      background: white;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    #tabs-bar {
-      display: flex;
-      background: #f8f9fa;
-      padding: 6px 12px 0;
-      border-bottom: 1px solid #ddd;
-      transition: all 0.3s ease;
-    }
-    #tabs-container {
-      display: flex;
-      flex: 1;
-      gap: 6px;
-      overflow-x: auto;
-      max-width: calc(100% - 40px);
-    }
-    .tab {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      background: #e9ecef;
-      border: 1px solid #ddd;
-      border-bottom: none;
-      border-radius: 6px 6px 0 0;
-      cursor: pointer;
-      min-width: 140px;
-      font-family: 'IBM Plex Sans', sans-serif;
-      font-size: 13px;
-      font-weight: 500;
-      transition: background 0.3s ease, transform 0.3s ease;
-    }
-    .tab.active {
-      background: white;
-    }
-    #toolbar {
-      padding: 12px;
-      background: #f8f9fa;
-      border-bottom: 1px solid #ddd;
-      display: flex;
-      gap: 15px;
-      align-items: center;
-      transition: all 0.3s ease;
-    }
-    #controls {
-      display: flex;
-      gap: 8px;
-    }
-    .control-btn {
-      background: none;
-      border: none;
-      padding: 6px;
-      cursor: pointer;
-      border-radius: 4px;
-      transition: transform 0.2s;
-    }
-    .control-btn:hover {
-      transform: scale(1.1);
-    }
-    .control-btn i {
-      color: #333;
-      font-size: 18px;
-    }
-    #url-bar {
-      flex: 1;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      font-weight: 500;
-    }
-    #url-input {
-      flex: 1;
-      padding: 10px 20px;
-      border: 1px solid #ddd;
-      border-radius: 25px;
-      outline: none;
-      font-size: 14px;
-      font-family: 'IBM Plex Sans', sans-serif;
-      text-align: center;
-      font-weight: 500;
-    }
-    #content-container {
-      flex: 1;
-      position: relative;
-      overflow: hidden;
-    }
-    #newtab-content {
-      width: 100%;
-      height: 100%;
-      padding: 20px;
-      background: url('https://cdn.dribbble.com/users/234525/screenshots/5853076/eggsacrosstheuniverse.jpg') no-repeat center center fixed;
-      background-size: cover;
-      color: white;
-      overflow: hidden;
-      transform-origin: top left;
-      transition: transform 0.3s ease;
-    }
-    #browserContainer {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      transform: scale(0.8);
-      transform-origin: top left;
-    }
-    #content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      width: 100%;
-      max-width: 800px;
-      margin-top: 80px;
-    }
-    h1, .time-date, .bookmark span, .add-bookmark {
-      font-family: 'Futura', sans-serif;
-    }
-    .bookmarks {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
-      opacity: 0;
-      animation: enterBookmarks 1s forwards 0.5s;
-      margin-top: 15px !important;
-    }
-    .add-bookmark {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    #browser-frame {
-      width: 100%;
-      height: 100%;
-      border: none;
-      background: white;
-      display: none;
-    }
-    #browserContainer h1 {
-      font-size: 2.5rem;
-      margin-bottom: 15px;
-      text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
-      transition: transform 0.3s ease;
-    }
-    #browserContainer h1:hover {
-      transform: scale(1.1);
-    }
-    .time-date {
-      font-size: 1.3rem;
-      margin-bottom: 15px;
-      text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
-      transition: transform 0.3s ease;
-    }
-    .time-date:hover {
-      transform: scale(1.1);
-    }
-    .search-container {
-      width: 85%;
-      max-width: 650px;
-      margin: 0 auto 20px;
-    }
-    .input {
-      font-family: "Futura", sans-serif;
-      width: 100%;
-      padding: 25px;
-      border: none;
-      border-radius: 25px;
-      font-size: 1.1rem;
-      backdrop-filter: blur(10px);
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-      transition: background 0.3s ease, box-shadow 0.3s ease;
-    }
-    .input::placeholder {
-      color: rgba(255, 255, 255, 0.7);
-      font-family: "Futura", sans-serif;
-    }
-    .input:hover {
-      background: rgba(255, 255, 255, 0.3);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-    }
-    .bookmark, .add-bookmark {
-      margin-bottom: 25px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 15px;
-      border-radius: 20px;
-      width: 140px;
-      height: 140px;
-      background: rgba(255, 255, 255, 0.2);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-      transition: transform 0.3s ease, background 0.3s ease;
-      backdrop-filter: blur(10px);
-    }
-    .bookmark {
-      text-decoration: none;
-      color: white;
-    }
-    .bookmark img {
-      margin: auto;
-      height: 50px;
-      width: auto;
-      transition: transform 0.3s ease;
-    }
-    .bookmark span {
-      font-size: 1rem;
-      margin: auto;
-    }
-    .bookmark:hover, .add-bookmark:hover {
-      transform: scale(1.07);
-      background: rgba(255, 255, 255, 0.3);
-    }
-    .bookmark img:hover {
-      transform: rotate(10deg) scale(1.15);
-    }
-    .add-bookmark-modal {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      padding: 25px;
-      background: rgba(0, 0, 0, 0.9);
-      border-radius: 20px;
-      color: white;
-      display: none;
-      flex-direction: column;
-      gap: 15px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
-      width: 350px;
-    }
-    .add-bookmark-modal input {
-      padding: 12px 18px;
-      border-radius: 8px;
-      border: none;
-      width: 100%;
-      box-sizing: border-box;
-      font-size: 16px;
-    }
-    .add-bookmark-modal button {
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      background: #5192f5;
-      color: white;
-      cursor: pointer;
-      transition: background 0.3s ease;
-      font-size: 16px;
-    }
-    .add-bookmark-modal button:hover {
-      background: #3e81e6;
-    }
-    .top-right-menu, .top-left-menu {
-      position: absolute;
-      top: 15px;
-    }
-    .top-right-menu { right: 15px; }
-    .top-left-menu { left: 15px; }
-    .menu-button {
-      padding: 18px;
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      border-radius: 30px;
-      cursor: pointer;
-      font-family: "Futura", sans-serif;
-      font-size: 1.2rem;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-      transition: all 0.3s ease;
-    }
-    .menu-button:hover {
-      background: rgba(255, 255, 255, 0.3);
-      transform: scale(1.1);
-    }
-    .rotating-text {
-      font-family: "Futura", sans-serif;
-      font-size: 1.6rem;
-      color: white;
-      text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
-      margin-top: 15px;
-      min-height: 2em;
-    }
-    @keyframes enterBookmarks {
-      to { opacity: 1; }
-    }
-  </style>
-</head>
-<body>
-  <div id="browser">
-    <div id="tabs-bar">
-      <div id="tabs-container"></div>
-      <button id="new-tab" class="control-btn"><i class="fas fa-plus"></i></button>
-    </div>
-    <div id="toolbar">
-      <div id="controls">
-        <button id="back" class="control-btn"><i class="fas fa-arrow-left"></i></button>
-        <button id="forward" class="control-btn"><i class="fas fa-arrow-right"></i></button>
-        <button id="reload" class="control-btn"><i class="fas fa-sync-alt"></i></button>
+  <head>
+    <title>Asphalt Proxy - Tabbed Browser</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Futura&family=IBM+Plex+Sans:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: 'IBM Plex Sans', sans-serif;
+        background: #f0f0f0;
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+      }
+      #browser {
+        background: white;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      #tabs-bar {
+        display: flex;
+        background: #f8f9fa;
+        padding: 6px 12px 0;
+        border-bottom: 1px solid #ddd;
+        transition: all 0.3s ease;
+        align-items: center;
+        justify-content: space-between;
+      }
+      #tabs-container {
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        flex: 1;
+      }
+      .tab {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: #e9ecef;
+        border: 1px solid #ddd;
+        border-bottom: none;
+        border-radius: 6px 6px 0 0;
+        cursor: pointer;
+        min-width: 140px;
+        font-family: 'IBM Plex Sans', sans-serif;
+        font-size: 13px;
+        font-weight: 500;
+        transition: background 0.3s ease, transform 0.3s ease;
+      }
+      .tab.active {
+        background: white;
+      }
+      #toolbar {
+        padding: 12px;
+        background: #f8f9fa;
+        border-bottom: 1px solid #ddd;
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+      }
+      #controls {
+        display: flex;
+        gap: 8px;
+      }
+      .control-btn {
+        background: none;
+        border: none;
+        padding: 6px;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: transform 0.2s;
+      }
+      .control-btn:hover {
+        transform: scale(1.1);
+      }
+      .control-btn i {
+        color: #333;
+        font-size: 18px;
+      }
+      #url-bar {
+        flex: 1;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+      }
+      #url-input {
+        flex: 1;
+        padding: 10px 20px;
+        border: 1px solid #ddd;
+        border-radius: 25px;
+        outline: none;
+        font-size: 14px;
+        font-family: 'IBM Plex Sans', sans-serif;
+        text-align: center;
+        font-weight: 500;
+        max-width: 500px;
+      }
+      #content-container {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #newtab-content {
+        width: 100%;
+        height: 100%;
+        padding: 20px;
+        background: url('https://cdn.dribbble.com/users/234525/screenshots/5853076/eggsacrosstheuniverse.jpg')
+          no-repeat center center fixed;
+        background-size: cover;
+        color: white;
+        overflow: hidden;
+        transform: scale(0.95);
+        transform-origin: center;
+        transition: transform 0.3s ease;
+      }
+      #browserContainer {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      #content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: 100%;
+        max-width: 800px;
+      }
+      h1,
+      .time-date,
+      .bookmark span,
+      .add-bookmark {
+        font-family: 'Futura', sans-serif;
+      }
+      .bookmarks {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        opacity: 0;
+        animation: enterBookmarks 1s forwards 0.5s;
+        margin-top: 15px !important;
+      }
+      .add-bookmark {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #browser-frame {
+        width: 100%;
+        height: 100%;
+        border: none;
+        background: white;
+        display: none;
+      }
+      #browserContainer h1 {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+        transition: transform 0.3s ease;
+      }
+      #browserContainer h1:hover {
+        transform: scale(1.1);
+      }
+      .time-date {
+        font-size: 1.3rem;
+        margin-bottom: 15px;
+        text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+        transition: transform 0.3s ease;
+      }
+      .time-date:hover {
+        transform: scale(1.1);
+      }
+      .search-container {
+        width: 85%;
+        max-width: 650px;
+        margin: 0 auto 20px;
+      }
+      .input {
+        font-family: "Futura", sans-serif;
+        width: 100%;
+        padding: 25px;
+        border: none;
+        border-radius: 25px;
+        font-size: 1.1rem;
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        transition: background 0.3s ease, box-shadow 0.3s ease;
+      }
+      .input::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+        font-family: "Futura", sans-serif;
+      }
+      .input:hover {
+        background: rgba(255, 255, 255, 0.3);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+      }
+      .bookmark,
+      .add-bookmark {
+        margin-bottom: 25px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 15px;
+        border-radius: 20px;
+        width: 140px;
+        height: 140px;
+        background: rgba(255, 255, 255, 0.2);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease, background 0.3s ease;
+        backdrop-filter: blur(10px);
+      }
+      .bookmark {
+        text-decoration: none;
+        color: white;
+      }
+      .bookmark img {
+        margin: auto;
+        height: 50px;
+        width: auto;
+        transition: transform 0.3s ease;
+      }
+      .bookmark span {
+        font-size: 1rem;
+        margin: auto;
+      }
+      .bookmark:hover,
+      .add-bookmark:hover {
+        transform: scale(1.07);
+        background: rgba(255, 255, 255, 0.3);
+      }
+      .bookmark img:hover {
+        transform: rotate(10deg) scale(1.15);
+      }
+      .add-bookmark-modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 25px;
+        background: rgba(0, 0, 0, 0.9);
+        border-radius: 20px;
+        color: white;
+        display: none;
+        flex-direction: column;
+        gap: 15px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+        width: 350px;
+      }
+      .add-bookmark-modal input {
+        padding: 12px 18px;
+        border-radius: 8px;
+        border: none;
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 16px;
+      }
+      .add-bookmark-modal button {
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        background: #5192f5;
+        color: white;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        font-size: 16px;
+      }
+      .add-bookmark-modal button:hover {
+        background: #3e81e6;
+      }
+      .top-right-menu,
+      .top-left-menu {
+        position: absolute;
+        top: 15px;
+      }
+      .top-right-menu {
+        right: 15px;
+      }
+      .top-left-menu {
+        left: 15px;
+      }
+      .menu-button {
+        padding: 18px;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border-radius: 30px;
+        cursor: pointer;
+        font-family: "Futura", sans-serif;
+        font-size: 1.2rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+      }
+      .menu-button:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.1);
+      }
+      .rotating-text {
+        font-family: "Futura", sans-serif;
+        font-size: 1.6rem;
+        color: white;
+        text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+        margin-top: 15px;
+        min-height: 2em;
+      }
+      @keyframes enterBookmarks {
+        to {
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="browser">
+      <div id="tabs-bar">
+        <div id="tabs-container"></div>
+        <button id="new-tab" class="control-btn"><i class="fas fa-plus"></i></button>
       </div>
-      <div id="url-bar">
-        <input type="text" id="url-input" placeholder="Enter URL...">
-        <button id="go" class="control-btn"><i class="fas fa-paper-plane"></i></button>
+      <div id="toolbar">
+        <div id="controls">
+          <button id="back" class="control-btn"><i class="fas fa-arrow-left"></i></button>
+          <button id="forward" class="control-btn"><i class="fas fa-arrow-right"></i></button>
+          <button id="reload" class="control-btn"><i class="fas fa-sync-alt"></i></button>
+        </div>
+        <div id="url-bar">
+          <input type="text" id="url-input" placeholder="Enter URL..." />
+          <button id="go" class="control-btn"><i class="fas fa-paper-plane"></i></button>
+        </div>
       </div>
-    </div>
-    <div id="content-container">
-      <div id="newtab-content">
-        <div class="top-right-menu">
-          <button class="menu-button" onclick="SHS()">Search History Spammer</button>
-        </div>
-        <div class="top-left-menu">
-          <button class="menu-button" onclick="AB()">About:blank Cloaker</button>
-        </div>
-        <div id="browserContainer">
-          <div id="content">
-            <h1>MadEgg Proxy</h1>
-            <div class="time-date" id="time-date"></div>
-            <div class="search-container">
-              <input type="text" class="input" placeholder="Enter a search query or URL" id="searchInputNewtab">
-            </div>
-            <div class="bookmarks" id="bookmarks">
-              <a href="javascript:void(0)" class="bookmark" onclick="go('https://www.youtube.com')">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" alt="YouTube">
-                <span>YouTube</span>
-              </a>
-              <a href="javascript:void(0)" class="bookmark" onclick="go('https://twitter.com')">
-                <img src="https://cdn.freebiesupply.com/logos/large/2x/twitter-3-logo-png-transparent.png" alt="Twitter">
-                <span>Twitter</span>
-              </a>
-              <a href="javascript:void(0)" class="bookmark" onclick="go('https://discord.com')">
-                <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png" alt="Discord">
-                <span>Discord</span>
-              </a>
-              <a href="javascript:void(0)" class="bookmark" onclick="go('https://www.nvidia.com/en-us/geforce-now/')">
-                <img src="https://www.nesabamedia.com/wp-content/uploads/2022/06/GeForce-NOW-Logo-1.png" alt="GeForce Now">
-                <span>GeForce Now</span>
-              </a>
-              <div class="add-bookmark" id="add-bookmark">+ Add Bookmark</div>
-            </div>
-            <div class="rotating-text" id="rotating-text"></div>
-            <div class="add-bookmark-modal" id="add-bookmark-modal">
-              <input type="text" id="bookmark-name" placeholder="Bookmark Name">
-              <input type="text" id="bookmark-url" placeholder="Bookmark URL">
-              <button id="save-bookmark">Save</button>
+      <div id="content-container">
+        <div id="newtab-content">
+          <div class="top-right-menu">
+            <button class="menu-button" onclick="SHS()">Search History Spammer</button>
+          </div>
+          <div class="top-left-menu">
+            <button class="menu-button" onclick="AB()">About:blank Cloaker</button>
+          </div>
+          <div id="browserContainer">
+            <div id="content">
+              <h1>MadEgg Proxy</h1>
+              <div class="time-date" id="time-date"></div>
+              <div class="search-container">
+                <input
+                  type="text"
+                  class="input"
+                  placeholder="Enter a search query or URL"
+                  id="searchInputNewtab"
+                />
+              </div>
+              <div class="bookmarks" id="bookmarks">
+                <a href="javascript:void(0)" class="bookmark" onclick="go('https://www.youtube.com')">
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" alt="YouTube" />
+                  <span>YouTube</span>
+                </a>
+                <a href="javascript:void(0)" class="bookmark" onclick="go('https://twitter.com')">
+                  <img src="https://cdn.freebiesupply.com/logos/large/2x/twitter-3-logo-png-transparent.png" alt="Twitter" />
+                  <span>Twitter</span>
+                </a>
+                <a href="javascript:void(0)" class="bookmark" onclick="go('https://discord.com')">
+                  <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png" alt="Discord" />
+                  <span>Discord</span>
+                </a>
+                <a
+                  href="javascript:void(0)"
+                  class="bookmark"
+                  onclick="go('https://www.nvidia.com/en-us/geforce-now/')"
+                >
+                  <img src="https://www.nesabamedia.com/wp-content/uploads/2022/06/GeForce-NOW-Logo-1.png" alt="GeForce Now" />
+                  <span>GeForce Now</span>
+                </a>
+                <div class="add-bookmark" id="add-bookmark">+ Add Bookmark</div>
+              </div>
+              <div class="rotating-text" id="rotating-text"></div>
+              <div class="add-bookmark-modal" id="add-bookmark-modal">
+                <input type="text" id="bookmark-name" placeholder="Bookmark Name" />
+                <input type="text" id="bookmark-url" placeholder="Bookmark URL" />
+                <button id="save-bookmark">Save</button>
+              </div>
             </div>
           </div>
         </div>
+        <iframe id="browser-frame"></iframe>
       </div>
-      <iframe id="browser-frame"></iframe>
     </div>
-  </div>
-  <script src="./uv/uv.bundle.js"></script>
-  <script src="./uv/uv.config.js"></script>
-  <script src="./assets/register-sw.js"></script>
-  <script src="./assets/script.js"></script>
-  <script>
-    function updateTimeDate() {
-      const date = new Date();
-      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-      document.getElementById('time-date').textContent = date.toLocaleDateString('en-US', options).replace(' at', ',');
-    }
-    setInterval(updateTimeDate, 1000);
-    updateTimeDate();
-    function go(url) {
-      const newtabContent = document.getElementById('newtab-content');
-      const browserFrame = document.getElementById('browser-frame');
-      const urlInput = document.getElementById('url-input');
-      if (url === 'asphalt://newtab') {
-        newtabContent.style.display = 'block';
-        browserFrame.style.display = 'none';
-        urlInput.value = 'asphalt://newtab';
-      } else {
-        newtabContent.style.display = 'none';
-        browserFrame.style.display = 'block';
-        const processedUrl = `https://asphalt-nine.vercel.app/${__uv$config.prefix}${__uv$config.encodeUrl(url)}`;
-        browserFrame.src = processedUrl;
-        urlInput.value = url;
+    <script src="./uv/uv.bundle.js"></script>
+    <script src="./uv/uv.config.js"></script>
+    <script src="./assets/register-sw.js"></script>
+    <script src="./assets/script.js"></script>
+    <script>
+      function updateTimeDate() {
+        const date = new Date();
+        const options = {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        };
+        document.getElementById('time-date').textContent = date
+          .toLocaleDateString('en-US', options)
+          .replace(' at', ',');
       }
-    }
-    class Browser {
-      constructor() {
-        this.tabs = [];
-        this.activeTabId = null;
-        this.initElements();
-        this.bindEvents();
-        this.createTab();
+      setInterval(updateTimeDate, 1000);
+      updateTimeDate();
+      function go(url) {
+        const newtabContent = document.getElementById('newtab-content');
+        const browserFrame = document.getElementById('browser-frame');
+        const urlInput = document.getElementById('url-input');
+        if (url === 'asphalt://newtab') {
+          newtabContent.style.display = 'block';
+          browserFrame.style.display = 'none';
+          urlInput.value = 'asphalt://newtab';
+        } else {
+          newtabContent.style.display = 'none';
+          browserFrame.style.display = 'block';
+          const processedUrl = `https://asphalt-nine.vercel.app/${__uv$config.prefix}${__uv$config.encodeUrl(url)}`;
+          browserFrame.src = processedUrl;
+          urlInput.value = url;
+        }
       }
-      initElements() {
-        this.tabsContainer = document.getElementById('tabs-container');
-        this.contentContainer = document.getElementById('content-container');
-        this.urlInput = document.getElementById('url-input');
-        this.backBtn = document.getElementById('back');
-        this.forwardBtn = document.getElementById('forward');
-        this.reloadBtn = document.getElementById('reload');
-        this.goBtn = document.getElementById('go');
-        this.newTabBtn = document.getElementById('new-tab');
-        this.newtabContent = document.getElementById('newtab-content');
-        this.browserFrame = document.getElementById('browser-frame');
-      }
-      bindEvents() {
-        this.backBtn.addEventListener('click', () => this.goBack());
-        this.forwardBtn.addEventListener('click', () => this.goForward());
-        this.reloadBtn.addEventListener('click', () => this.reload());
-        this.goBtn.addEventListener('click', () => this.navigate());
-        this.newTabBtn.addEventListener('click', () => this.createTab());
-        this.urlInput.addEventListener('keypress', (e) => {
-          if (e.key === 'Enter') this.navigate();
-        });
-      }
-      createTab() {
-        const tabId = Date.now();
-        this.tabs.push({
-          id: tabId,
-          url: 'asphalt://newtab',
-          history: [],
-          historyIndex: -1
-        });
-        this.renderTabs();
-        this.setActiveTab(tabId);
-      }
-      setActiveTab(tabId) {
-        this.activeTabId = tabId;
-        const tab = this.tabs.find(t => t.id === tabId);
-        this.urlInput.value = tab.url;
-        this.renderTabs();
-        this.renderContent(tab);
-      }
-      renderTabs() {
-        this.tabsContainer.innerHTML = this.tabs.map(tab => `
-          <div class="tab ${tab.id === this.activeTabId ? 'active' : ''}" data-tab-id="${tab.id}">
-            ${tab.url === 'asphalt://newtab' ? 'New Tab' : tab.url}
-            <span class="close-tab" onclick="browser.closeTab(${tab.id})"><i class="fas fa-times"></i></span>
-          </div>
-        `).join('');
-        document.querySelectorAll('.tab').forEach(tabEl => {
-          tabEl.addEventListener('click', (e) => {
-            if (!e.target.classList.contains('close-tab')) {
-              this.setActiveTab(parseInt(tabEl.dataset.tabId));
-            }
+      class Browser {
+        constructor() {
+          this.tabs = [];
+          this.activeTabId = null;
+          this.initElements();
+          this.bindEvents();
+          this.createTab();
+        }
+        initElements() {
+          this.tabsContainer = document.getElementById('tabs-container');
+          this.contentContainer = document.getElementById('content-container');
+          this.urlInput = document.getElementById('url-input');
+          this.backBtn = document.getElementById('back');
+          this.forwardBtn = document.getElementById('forward');
+          this.reloadBtn = document.getElementById('reload');
+          this.goBtn = document.getElementById('go');
+          this.newTabBtn = document.getElementById('new-tab');
+          this.newtabContent = document.getElementById('newtab-content');
+          this.browserFrame = document.getElementById('browser-frame');
+        }
+        bindEvents() {
+          this.backBtn.addEventListener('click', () =>
+            document.getElementById('browser-frame').contentWindow.history.back()
+          );
+          this.forwardBtn.addEventListener('click', () =>
+            document.getElementById('browser-frame').contentWindow.history.forward()
+          );
+          this.reloadBtn.addEventListener('click', () => this.reload());
+          this.goBtn.addEventListener('click', () => this.navigate());
+          this.newTabBtn.addEventListener('click', () => this.createTab());
+          this.urlInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.navigate();
           });
-        });
-      }
-      renderContent(tab) {
-        this.browserFrame.style.display = 'none';
-        this.newtabContent.style.display = 'none';
-        if (tab.url === 'asphalt://newtab') {
-          this.newtabContent.style.display = 'block';
-        } else {
-          this.browserFrame.style.display = 'block';
-          this.browserFrame.src = `https://asphalt-nine.vercel.app/${__uv$config.prefix}${__uv$config.encodeUrl(tab.url)}`;
         }
-      }
-      navigate() {
-        const input = this.urlInput.value.trim();
-        let finalUrl = input;
-        if (input === 'asphalt://newtab') {
-          finalUrl = input;
-        } else {
-          try {
-            new URL(input);
-          } catch (_) {
-            finalUrl = input.includes('.') && !input.includes(' ') ? 
-              `https://${input}` : 
-              `https://www.google.com/search?q=${encodeURIComponent(input)}`;
+        createTab() {
+          const tabId = Date.now();
+          this.tabs.push({
+            id: tabId,
+            url: 'asphalt://newtab',
+            history: [],
+            historyIndex: -1
+          });
+          this.renderTabs();
+          this.setActiveTab(tabId);
+        }
+        setActiveTab(tabId) {
+          this.activeTabId = tabId;
+          const tab = this.tabs.find((t) => t.id === tabId);
+          this.urlInput.value = tab.url;
+          this.renderTabs();
+          this.renderContent(tab);
+        }
+        renderTabs() {
+          this.tabsContainer.innerHTML = this.tabs
+            .map(
+              (tab) =>
+                `<div class="tab ${tab.id === this.activeTabId ? 'active' : ''}" data-tab-id="${tab.id}">${
+                  tab.url === 'asphalt://newtab' ? 'New Tab' : tab.url
+                }<span class="close-tab" onclick="browser.closeTab(${tab.id})"><i class="fas fa-times"></i></span></div>`
+            )
+            .join('');
+          document.querySelectorAll('.tab').forEach((tabEl) => {
+            tabEl.addEventListener('click', (e) => {
+              if (!e.target.classList.contains('close-tab')) {
+                this.setActiveTab(parseInt(tabEl.dataset.tabId));
+              }
+            });
+          });
+        }
+        renderContent(tab) {
+          this.browserFrame.style.display = 'none';
+          this.newtabContent.style.display = 'none';
+          if (tab.url === 'asphalt://newtab') {
+            this.newtabContent.style.display = 'block';
+          } else {
+            this.browserFrame.style.display = 'block';
+            this.browserFrame.src = `https://asphalt-nine.vercel.app/${__uv$config.prefix}${__uv$config.encodeUrl(tab.url)}`;
           }
         }
-        go(finalUrl);
-      }
-      goBack() {
-        const tab = this.tabs.find(t => t.id === this.activeTabId);
-        if (tab.historyIndex > 0) {
-          tab.historyIndex--;
-          go(tab.history[tab.historyIndex]);
+        navigate() {
+          const input = this.urlInput.value.trim();
+          let finalUrl = input;
+          if (input === 'asphalt://newtab') {
+            finalUrl = input;
+          } else {
+            try {
+              new URL(input);
+            } catch (_) {
+              finalUrl =
+                input.includes('.') && !input.includes(' ')
+                  ? `https://${input}`
+                  : `https://www.google.com/search?q=${encodeURIComponent(input)}`;
+            }
+          }
+          go(finalUrl);
         }
-      }
-      goForward() {
-        const tab = this.tabs.find(t => t.id === this.activeTabId);
-        if (tab.historyIndex < tab.history.length - 1) {
-          tab.historyIndex++;
-          go(tab.history[tab.historyIndex]);
-        }
-      }
-      reload() {
-        const tab = this.tabs.find(t => t.id === this.activeTabId);
-        if (tab) this.renderContent(tab);
-      }
-      closeTab(tabId) {
-        this.tabs = this.tabs.filter(t => t.id !== tabId);
-        this.renderTabs();
-        if (this.tabs.length === 0) this.createTab();
-      }
-    }
-    const browser = new Browser();
-    document.getElementById('searchInputNewtab').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        let input = e.target.value.trim();
-        let finalUrl = input;
-        if (input !== 'asphalt://newtab'){
-          try {
-            new URL(input);
-          } catch (_) {
-            finalUrl = input.includes('.') && !input.includes(' ') ? `https://${input}` : `https://www.google.com/search?q=${encodeURIComponent(input)}`;
+        goBack() {
+          const tab = this.tabs.find((t) => t.id === this.activeTabId);
+          if (tab.historyIndex > 0) {
+            tab.historyIndex--;
+            go(tab.history[tab.historyIndex]);
           }
         }
-        go(finalUrl);
-      }
-    });
-    const addBookmarkButton = document.getElementById('add-bookmark');
-    const addBookmarkModal = document.getElementById('add-bookmark-modal');
-    const saveBookmarkButton = document.getElementById('save-bookmark');
-    const bookmarksContainer = document.getElementById('bookmarks');
-    addBookmarkButton.addEventListener('click', () => {
-      addBookmarkModal.style.display = 'flex';
-    });
-    saveBookmarkButton.addEventListener('click', () => {
-      const name = document.getElementById('bookmark-name').value;
-      const url = document.getElementById('bookmark-url').value;
-      if (name && url) {
-        const link = document.createElement('a');
-        link.href = '#';
-        link.className = 'bookmark';
-        const img = document.createElement('img');
-        img.src = `https://www.google.com/s2/favicons?sz=64&domain_url=${encodeURIComponent(url)}`;
-        img.alt = name;
-        link.appendChild(img);
-        const span = document.createElement('span');
-        span.textContent = name;
-        link.appendChild(span);
-        link.addEventListener('click', () => { go(url); });
-        bookmarksContainer.insertBefore(link, addBookmarkButton);
-        addBookmarkModal.style.display = 'none';
-      }
-    });
-    const rotatingText = document.getElementById('rotating-text');
-    const messages = [
-      "Your phone's at 1%. Find a charger ASAP.",
-      "Still waiting for a reply? Classic.",
-      "Check your phone again. Yep, still no new texts.",
-      "You texted them, they didn't reply. Story of our lives.",
-      "Refresh again. It’s not gonna change, but okay.",
-      "How is it that we only notice how tired we are once we sit down?"
-    ];
-    let currentMessageIndex = 0;
-    let currentCharIndex = 0;
-    let isDeleting = false;
-    const typingSpeed = 100;
-    const pauseBetween = 2000;
-    function type() {
-      let currentMessage = messages[currentMessageIndex];
-      if (isDeleting) {
-        rotatingText.textContent = currentMessage.substring(0, currentCharIndex--);
-        if (currentCharIndex < 0) {
-          isDeleting = false;
-          currentMessageIndex = (currentMessageIndex + 1) % messages.length;
-          setTimeout(type, 500);
-        } else {
-          setTimeout(type, typingSpeed / 2);
+        goForward() {
+          const tab = this.tabs.find((t) => t.id === this.activeTabId);
+          if (tab.historyIndex < tab.history.length - 1) {
+            tab.historyIndex++;
+            go(tab.history[tab.historyIndex]);
+          }
         }
-      } else {
-        rotatingText.textContent = currentMessage.substring(0, currentCharIndex++);
-        if (currentCharIndex > currentMessage.length) {
-          setTimeout(() => {
-            isDeleting = true;
+        reload() {
+          const tab = this.tabs.find((t) => t.id === this.activeTabId);
+          if (tab) this.renderContent(tab);
+        }
+        closeTab(tabId) {
+          this.tabs = this.tabs.filter((t) => t.id !== tabId);
+          this.renderTabs();
+          if (this.tabs.length === 0) this.createTab();
+        }
+      }
+      const browser = new Browser();
+      document.getElementById('searchInputNewtab').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          let input = e.target.value.trim();
+          let finalUrl = input;
+          if (input !== 'asphalt://newtab') {
+            try {
+              new URL(input);
+            } catch (_) {
+              finalUrl =
+                input.includes('.') && !input.includes(' ')
+                  ? `https://${input}`
+                  : `https://www.google.com/search?q=${encodeURIComponent(input)}`;
+            }
+          }
+          go(finalUrl);
+        }
+      });
+      const addBookmarkButton = document.getElementById('add-bookmark');
+      const addBookmarkModal = document.getElementById('add-bookmark-modal');
+      const saveBookmarkButton = document.getElementById('save-bookmark');
+      const bookmarksContainer = document.getElementById('bookmarks');
+      addBookmarkButton.addEventListener('click', () => {
+        addBookmarkModal.style.display = 'flex';
+      });
+      saveBookmarkButton.addEventListener('click', () => {
+        const name = document.getElementById('bookmark-name').value;
+        const url = document.getElementById('bookmark-url').value;
+        if (name && url) {
+          const link = document.createElement('a');
+          link.href = '#';
+          link.className = 'bookmark';
+          const img = document.createElement('img');
+          img.src = `https://www.google.com/s2/favicons?sz=64&domain_url=${encodeURIComponent(url)}`;
+          img.alt = name;
+          link.appendChild(img);
+          const span = document.createElement('span');
+          span.textContent = name;
+          link.appendChild(span);
+          link.addEventListener('click', () => {
+            go(url);
+          });
+          bookmarksContainer.insertBefore(link, addBookmarkButton);
+          addBookmarkModal.style.display = 'none';
+        }
+      });
+      const rotatingText = document.getElementById('rotating-text');
+      const messages = [
+        "Your phone's at 1%. Find a charger ASAP.",
+        "Still waiting for a reply? Classic.",
+        "Check your phone again. Yep, still no new texts.",
+        "You texted them, they didn't reply. Story of our lives.",
+        "Refresh again. It’s not gonna change, but okay.",
+        "How is it that we only notice how tired we are once we sit down?"
+      ];
+      let currentMessageIndex = 0;
+      let currentCharIndex = 0;
+      let isDeleting = false;
+      const typingSpeed = 100;
+      const pauseBetween = 2000;
+      function type() {
+        let currentMessage = messages[currentMessageIndex];
+        if (isDeleting) {
+          rotatingText.textContent = currentMessage.substring(0, currentCharIndex--);
+          if (currentCharIndex < 0) {
+            isDeleting = false;
+            currentMessageIndex = (currentMessageIndex + 1) % messages.length;
+            setTimeout(type, 500);
+          } else {
             setTimeout(type, typingSpeed / 2);
-          }, pauseBetween);
+          }
         } else {
-          setTimeout(type, typingSpeed);
+          rotatingText.textContent = currentMessage.substring(0, currentCharIndex++);
+          if (currentCharIndex > currentMessage.length) {
+            setTimeout(() => {
+              isDeleting = true;
+              setTimeout(type, typingSpeed / 2);
+            }, pauseBetween);
+          } else {
+            setTimeout(type, typingSpeed);
+          }
         }
       }
-    }
-    type();
-    document.getElementById('reload').addEventListener('click', function() {
-      document.getElementById('browser-frame').contentWindow.location.reload();
-    });
-    document.getElementById('back').addEventListener('click', function() {
-      document.getElementById('browser-frame').contentWindow.history.back();
-    });
-    document.getElementById('forward').addEventListener('click', function() {
-      document.getElementById('browser-frame').contentWindow.history.forward();
-    });
-  </script>
-</body>
+      type();
+      document.getElementById('reload').addEventListener('click', function () {
+        document.getElementById('browser-frame').contentWindow.location.reload();
+      });
+      document.getElementById('back').addEventListener('click', function () {
+        document.getElementById('browser-frame').contentWindow.history.back();
+      });
+      document.getElementById('forward').addEventListener('click', function () {
+        document.getElementById('browser-frame').contentWindow.history.forward();
+      });
+    </script>
+  </body>
 </html>
