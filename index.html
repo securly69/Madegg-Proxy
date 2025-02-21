@@ -24,7 +24,6 @@
       flex-direction: column;
       overflow: hidden;
     }
-    
     #tabs-bar {
       display: flex;
       background: #f8f9fa;
@@ -52,13 +51,12 @@
       min-width: 140px;
       font-family: 'IBM Plex Sans', sans-serif;
       font-size: 13px;
-      font-weight: bold; /* Bold tab titles */
+      font-weight: 500;
       transition: background 0.3s ease, transform 0.3s ease;
     }
     .tab.active {
       background: white;
     }
-    
     #toolbar {
       padding: 12px;
       background: #f8f9fa;
@@ -92,7 +90,7 @@
       display: flex;
       gap: 10px;
       align-items: center;
-      font-weight: bold;
+      font-weight: 500;
     }
     #url-input {
       flex: 1;
@@ -103,9 +101,8 @@
       font-size: 14px;
       font-family: 'IBM Plex Sans', sans-serif;
       text-align: center;
-      font-weight: bold;
+      font-weight: 500;
     }
-
     #content-container {
       flex: 1;
       position: relative;
@@ -128,6 +125,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      transform: scale(0.8);
+      transform-origin: top left;
     }
     #content {
       display: flex;
@@ -313,6 +312,10 @@
 </head>
 <body>
   <div id="browser">
+    <div id="tabs-bar">
+      <div id="tabs-container"></div>
+      <button id="new-tab" class="control-btn"><i class="fas fa-plus"></i></button>
+    </div>
     <div id="toolbar">
       <div id="controls">
         <button id="back" class="control-btn"><i class="fas fa-arrow-left"></i></button>
@@ -323,10 +326,6 @@
         <input type="text" id="url-input" placeholder="Enter URL...">
         <button id="go" class="control-btn"><i class="fas fa-paper-plane"></i></button>
       </div>
-    </div>
-    <div id="tabs-bar">
-      <div id="tabs-container"></div>
-      <button id="new-tab" class="control-btn"><i class="fas fa-plus"></i></button>
     </div>
     <div id="content-container">
       <div id="newtab-content">
@@ -374,7 +373,6 @@
       <iframe id="browser-frame"></iframe>
     </div>
   </div>
-
   <script src="./uv/uv.bundle.js"></script>
   <script src="./uv/uv.config.js"></script>
   <script src="./assets/register-sw.js"></script>
@@ -387,12 +385,10 @@
     }
     setInterval(updateTimeDate, 1000);
     updateTimeDate();
-
     function go(url) {
       const newtabContent = document.getElementById('newtab-content');
       const browserFrame = document.getElementById('browser-frame');
       const urlInput = document.getElementById('url-input');
-      
       if (url === 'asphalt://newtab') {
         newtabContent.style.display = 'block';
         browserFrame.style.display = 'none';
@@ -405,7 +401,6 @@
         urlInput.value = url;
       }
     }
-
     class Browser {
       constructor() {
         this.tabs = [];
@@ -414,7 +409,6 @@
         this.bindEvents();
         this.createTab();
       }
-
       initElements() {
         this.tabsContainer = document.getElementById('tabs-container');
         this.contentContainer = document.getElementById('content-container');
@@ -427,7 +421,6 @@
         this.newtabContent = document.getElementById('newtab-content');
         this.browserFrame = document.getElementById('browser-frame');
       }
-
       bindEvents() {
         this.backBtn.addEventListener('click', () => this.goBack());
         this.forwardBtn.addEventListener('click', () => this.goForward());
@@ -438,7 +431,6 @@
           if (e.key === 'Enter') this.navigate();
         });
       }
-
       createTab() {
         const tabId = Date.now();
         this.tabs.push({
@@ -450,7 +442,6 @@
         this.renderTabs();
         this.setActiveTab(tabId);
       }
-
       setActiveTab(tabId) {
         this.activeTabId = tabId;
         const tab = this.tabs.find(t => t.id === tabId);
@@ -458,7 +449,6 @@
         this.renderTabs();
         this.renderContent(tab);
       }
-
       renderTabs() {
         this.tabsContainer.innerHTML = this.tabs.map(tab => `
           <div class="tab ${tab.id === this.activeTabId ? 'active' : ''}" data-tab-id="${tab.id}">
@@ -466,7 +456,6 @@
             <span class="close-tab" onclick="browser.closeTab(${tab.id})"><i class="fas fa-times"></i></span>
           </div>
         `).join('');
-        
         document.querySelectorAll('.tab').forEach(tabEl => {
           tabEl.addEventListener('click', (e) => {
             if (!e.target.classList.contains('close-tab')) {
@@ -475,11 +464,9 @@
           });
         });
       }
-
       renderContent(tab) {
         this.browserFrame.style.display = 'none';
         this.newtabContent.style.display = 'none';
-        
         if (tab.url === 'asphalt://newtab') {
           this.newtabContent.style.display = 'block';
         } else {
@@ -487,11 +474,9 @@
           this.browserFrame.src = `https://asphalt-nine.vercel.app/${__uv$config.prefix}${__uv$config.encodeUrl(tab.url)}`;
         }
       }
-
       navigate() {
         const input = this.urlInput.value.trim();
         let finalUrl = input;
-        
         if (input === 'asphalt://newtab') {
           finalUrl = input;
         } else {
@@ -503,10 +488,8 @@
               `https://www.google.com/search?q=${encodeURIComponent(input)}`;
           }
         }
-        
         go(finalUrl);
       }
-
       goBack() {
         const tab = this.tabs.find(t => t.id === this.activeTabId);
         if (tab.historyIndex > 0) {
@@ -514,7 +497,6 @@
           go(tab.history[tab.historyIndex]);
         }
       }
-
       goForward() {
         const tab = this.tabs.find(t => t.id === this.activeTabId);
         if (tab.historyIndex < tab.history.length - 1) {
@@ -522,36 +504,38 @@
           go(tab.history[tab.historyIndex]);
         }
       }
-
       reload() {
         const tab = this.tabs.find(t => t.id === this.activeTabId);
         if (tab) this.renderContent(tab);
       }
-
       closeTab(tabId) {
         this.tabs = this.tabs.filter(t => t.id !== tabId);
         this.renderTabs();
         if (this.tabs.length === 0) this.createTab();
       }
     }
-
     const browser = new Browser();
-
     document.getElementById('searchInputNewtab').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
-        go(e.target.value.trim());
+        let input = e.target.value.trim();
+        let finalUrl = input;
+        if (input !== 'asphalt://newtab'){
+          try {
+            new URL(input);
+          } catch (_) {
+            finalUrl = input.includes('.') && !input.includes(' ') ? `https://${input}` : `https://www.google.com/search?q=${encodeURIComponent(input)}`;
+          }
+        }
+        go(finalUrl);
       }
     });
-
     const addBookmarkButton = document.getElementById('add-bookmark');
     const addBookmarkModal = document.getElementById('add-bookmark-modal');
     const saveBookmarkButton = document.getElementById('save-bookmark');
     const bookmarksContainer = document.getElementById('bookmarks');
-
     addBookmarkButton.addEventListener('click', () => {
       addBookmarkModal.style.display = 'flex';
     });
-
     saveBookmarkButton.addEventListener('click', () => {
       const name = document.getElementById('bookmark-name').value;
       const url = document.getElementById('bookmark-url').value;
@@ -571,7 +555,6 @@
         addBookmarkModal.style.display = 'none';
       }
     });
-
     const rotatingText = document.getElementById('rotating-text');
     const messages = [
       "Your phone's at 1%. Find a charger ASAP.",
@@ -610,8 +593,6 @@
       }
     }
     type();
-
-    // Added working reload, forward, and backward buttons using the iframe's history
     document.getElementById('reload').addEventListener('click', function() {
       document.getElementById('browser-frame').contentWindow.location.reload();
     });
