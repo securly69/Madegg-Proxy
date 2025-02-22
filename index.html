@@ -205,6 +205,7 @@
         border: none;
         border-radius: 15px;
         font-size: 0.93rem;
+        /* Set backdrop-filter before the keyframes block */
         backdrop-filter: blur(10px);
         background: rgba(255, 255, 255, 0.2);
         color: white;
@@ -232,12 +233,14 @@
         height: 85px;
         background: rgba(255, 255, 255, 0.2);
         box-shadow: 0 3px 13px rgba(0, 0, 0, 0.3);
-        transition: transform 0.3s ease, background 0.3s ease;
+        /* Also set backdrop-filter early here */
         backdrop-filter: blur(10px);
+        transition: transform 0.3s ease, background 0.3s ease;
       }
       .bookmark {
         text-decoration: none;
         color: white;
+        backdrop-filter: blur(10px);
       }
       .bookmark img {
         margin: auto;
@@ -330,7 +333,6 @@
       @keyframes enterBookmarks {
         to {
           opacity: 3;
-          backdrop-filter: blur(3px);
         }
       }
     </style>
@@ -418,6 +420,8 @@
       }
       setInterval(updateTimeDate, 1000);
       updateTimeDate();
+      
+      // Global navigation function shared by both URL bar and new-tab search
       function go(url) {
         const newtabContent = document.getElementById('newtab-content');
         const browserFrame = document.getElementById('browser-frame');
@@ -438,6 +442,7 @@
           document.body.style.overflow = 'auto';
         }
       }
+      
       class Browser {
         constructor() {
           this.tabs = [];
@@ -459,8 +464,8 @@
           this.browserFrame = document.getElementById('browser-frame');
         }
         bindEvents() {
-          this.backBtn.addEventListener('click', () => document.getElementById('browser-frame').contentWindow.history.back());
-          this.forwardBtn.addEventListener('click', () => document.getElementById('browser-frame').contentWindow.history.forward());
+          this.backBtn.addEventListener('click', () => this.goBack());
+          this.forwardBtn.addEventListener('click', () => this.goForward());
           this.reloadBtn.addEventListener('click', () => this.reload());
           this.goBtn.addEventListener('click', () => this.navigate());
           this.newTabBtn.addEventListener('click', () => this.createTab());
@@ -487,7 +492,14 @@
           this.renderContent(tab);
         }
         renderTabs() {
-          this.tabsContainer.innerHTML = this.tabs.map((tab) => `<div class="tab ${tab.id === this.activeTabId ? 'active' : ''}" data-tab-id="${tab.id}">${tab.url === 'asphalt://newtab' ? 'New Tab' : tab.url}<span class="close-tab" onclick="browser.closeTab(${tab.id})"><i class="fas fa-times"></i></span></div>`).join('');
+          this.tabsContainer.innerHTML = this.tabs
+            .map(
+              (tab) =>
+                `<div class="tab ${tab.id === this.activeTabId ? 'active' : ''}" data-tab-id="${tab.id}">${
+                  tab.url === 'asphalt://newtab' ? 'New Tab' : tab.url
+                }<span class="close-tab" onclick="browser.closeTab(${tab.id})"><i class="fas fa-times"></i></span></div>`
+            )
+            .join('');
           document.querySelectorAll('.tab').forEach((tabEl) => {
             tabEl.addEventListener('click', (e) => {
               if (!e.target.classList.contains('close-tab')) {
@@ -515,8 +527,17 @@
             try {
               new URL(input);
             } catch (_) {
-              finalUrl = input.includes('.') && !input.includes(' ') ? `https://${input}` : `https://www.google.com/search?q=${encodeURIComponent(input)}`;
+              finalUrl = input.includes('.') && !input.includes(' ') 
+                ? `https://${input}` 
+                : `https://www.google.com/search?q=${encodeURIComponent(input)}`;
             }
+          }
+          // Update the current tab history (if not newtab)
+          if (finalUrl !== 'asphalt://newtab') {
+            const tab = this.tabs.find((t) => t.id === this.activeTabId);
+            tab.history = tab.history.slice(0, tab.historyIndex + 1);
+            tab.history.push(finalUrl);
+            tab.historyIndex = tab.history.length - 1;
           }
           go(finalUrl);
         }
@@ -524,14 +545,18 @@
           const tab = this.tabs.find((t) => t.id === this.activeTabId);
           if (tab.historyIndex > 0) {
             tab.historyIndex--;
-            go(tab.history[tab.historyIndex]);
+            const url = tab.history[tab.historyIndex];
+            this.urlInput.value = url;
+            go(url);
           }
         }
         goForward() {
           const tab = this.tabs.find((t) => t.id === this.activeTabId);
           if (tab.historyIndex < tab.history.length - 1) {
             tab.historyIndex++;
-            go(tab.history[tab.historyIndex]);
+            const url = tab.history[tab.historyIndex];
+            this.urlInput.value = url;
+            go(url);
           }
         }
         reload() {
@@ -544,29 +569,28 @@
           if (this.tabs.length === 0) this.createTab();
         }
       }
+      
       const browser = new Browser();
+      
+      // New-tab search bar uses the same go() function
       document.getElementById('searchInputNewtab').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
           e.preventDefault();
-          let input = e.target.value.trim();
-          let finalUrl = input;
-          if (input !== 'asphalt://newtab') {
-            try {
-              new URL(input);
-            } catch (_) {
-              finalUrl = input.includes('.') && !input.includes(' ') ? `https://${input}` : `https://www.google.com/search?q=${encodeURIComponent(input)}`;
-            }
-          }
-          go(finalUrl);
+          const input = e.target.value.trim();
+          document.getElementById('url-input').value = input;
+          go(input);
         }
       });
+      
       const addBookmarkButton = document.getElementById('add-bookmark');
       const addBookmarkModal = document.getElementById('add-bookmark-modal');
       const saveBookmarkButton = document.getElementById('save-bookmark');
       const bookmarksContainer = document.getElementById('bookmarks');
+      
       addBookmarkButton.addEventListener('click', () => {
         addBookmarkModal.style.display = 'flex';
       });
+      
       saveBookmarkButton.addEventListener('click', () => {
         const name = document.getElementById('bookmark-name').value;
         const url = document.getElementById('bookmark-url').value;
@@ -588,6 +612,7 @@
           addBookmarkModal.style.display = 'none';
         }
       });
+      
       const rotatingText = document.getElementById('rotating-text');
       const messages = [
         "Your phone's at 1%. Find a charger ASAP.",
@@ -597,11 +622,13 @@
         "Refresh again. It’s not gonna change, but okay.",
         "How is it that we only notice how tired we are once we sit down?"
       ];
+      
       let currentMessageIndex = 0;
       let currentCharIndex = 0;
       let isDeleting = false;
       const typingSpeed = 100;
       const pauseBetween = 2000;
+      
       function type() {
         let currentMessage = messages[currentMessageIndex];
         if (isDeleting) {
@@ -625,16 +652,8 @@
           }
         }
       }
+      
       type();
-      document.getElementById('reload').addEventListener('click', function () {
-        document.getElementById('browser-frame').contentWindow.location.reload();
-      });
-      document.getElementById('back').addEventListener('click', function () {
-        document.getElementById('browser-frame').contentWindow.history.back();
-      });
-      document.getElementById('forward').addEventListener('click', function () {
-        document.getElementById('browser-frame').contentWindow.history.forward();
-      });
     </script>
   </body>
 </html>
