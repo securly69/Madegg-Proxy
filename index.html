@@ -176,7 +176,7 @@
         display: none;
       }
       #browserContainer h1 {
-        font-size: 2.1rem;
+        font-size: 1.9rem;
         margin-bottom: 13px;
         text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
         transition: transform 0.3s ease;
@@ -185,7 +185,7 @@
         transform: scale(1.1);
       }
       .time-date {
-        font-size: 1.1rem;
+        font-size: 0.8rem;
         margin-bottom: 13px;
         text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
         transition: transform 0.3s ease;
@@ -195,15 +195,15 @@
       }
       .search-container {
         width: 85%;
-        max-width: 650px;
+        max-width: 600px;
         margin: 0 auto 17px;
       }
       .input {
         font-family: "Futura", sans-serif;
-        width: 100%;
-        padding: 21px;
+        width: 85%;
+        padding: 15px;
         border: none;
-        border-radius: 21px;
+        border-radius: 15px;
         font-size: 0.93rem;
         backdrop-filter: blur(10px);
         background: rgba(255, 255, 255, 0.2);
@@ -221,14 +221,15 @@
       }
       .bookmark,
       .add-bookmark {
-        margin-bottom: 21px;
+        margin-bottom: 2px;
         display: flex;
         flex-direction: column;
         align-items: center;
         padding: 13px;
         border-radius: 17px;
-        width: 119px;
-        height: 119px;
+        font-size: 10px;
+        width: 85px;
+        height: 85px;
         background: rgba(255, 255, 255, 0.2);
         box-shadow: 0 3px 13px rgba(0, 0, 0, 0.3);
         transition: transform 0.3s ease, background 0.3s ease;
@@ -240,12 +241,12 @@
       }
       .bookmark img {
         margin: auto;
-        height: 43px;
+        height: 30px;
         width: auto;
         transition: transform 0.3s ease;
       }
       .bookmark span {
-        font-size: 0.85rem;
+        font-size: 10px;
         margin: auto;
       }
       .bookmark:hover,
@@ -304,13 +305,13 @@
         left: 13px;
       }
       .menu-button {
-        padding: 15px;
+        padding: 9px;
         background: rgba(255, 255, 255, 0.2);
         color: white;
         border-radius: 30px;
         cursor: pointer;
         font-family: "Futura", sans-serif;
-        font-size: 1rem;
+        font-size: 10px;
         box-shadow: 0 3px 13px rgba(0, 0, 0, 0.3);
         transition: all 0.3s ease;
       }
@@ -328,7 +329,8 @@
       }
       @keyframes enterBookmarks {
         to {
-          opacity: 1;
+          opacity: 3;
+          backdrop-filter: blur(3px);
         }
       }
     </style>
@@ -424,12 +426,16 @@
           newtabContent.style.display = 'block';
           browserFrame.style.display = 'none';
           urlInput.value = 'asphalt://newtab';
+          document.documentElement.style.overflow = 'hidden';
+          document.body.style.overflow = 'hidden';
         } else {
           newtabContent.style.display = 'none';
           browserFrame.style.display = 'block';
           const processedUrl = `https://asphalt-nine.vercel.app/${__uv$config.prefix}${__uv$config.encodeUrl(url)}`;
           browserFrame.src = processedUrl;
           urlInput.value = url;
+          document.documentElement.style.overflow = 'auto';
+          document.body.style.overflow = 'auto';
         }
       }
       class Browser {
