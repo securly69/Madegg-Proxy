@@ -50,7 +50,7 @@
       .top-right-menu, .top-left-menu { position: absolute; top: 13px; }
       .top-right-menu { right: 13px; }
       .top-left-menu { left: 13px; }
-      .menu-button { padding: 9px; background: rgba(255, 255, 255, 0.2); color: white; border-radius: 30px; cursor: pointer; font-family: "Futura", sans-serif; font-size: 10px; box-shadow: 0 3px 13px rgba(0, 0, 0, 0.3); transition: all 0.3s ease; }
+      .menu-button { padding: 9px; background: rgba(255, 255, 255, 0.2); border: 1px solid white; color: white; border-radius: 30px; cursor: pointer; font-family: "Futura", sans-serif; font-size: 10px; box-shadow: 0 3px 13px rgba(0, 0, 0, 0.3); transition: all 0.3s ease; }
       .menu-button:hover { background: rgba(255, 255, 255, 0.3); transform: scale(1.1); }
       .rotating-text { font-family: "Futura", sans-serif; font-size: 15px; color: white; text-shadow: 0 0 10px rgba(0, 0, 0, 0.8); margin-top: 13px; min-height: 2em; }
       @keyframes enterBookmarks { to { opacity: 3; } }
@@ -70,7 +70,7 @@
         </div>
         <div id="url-bar">
           <input type="text" id="url-input" placeholder="Enter URL..." />
-          <button id="go" class="control-btn"><i class="fas fa-paper-plane"></i></button>
+          <button id="go" class="control-btn"><i class="fas fa-user-secret"></i></button>
         </div>
       </div>
       <div id="content-container">
@@ -230,6 +230,12 @@
             url = "https://" + url;
           }
         }
+        if(url.indexOf("madegg://") !== 0) {
+          var tab = browser.tabs.find((t)=> t.id === browser.activeTabId);
+          tab.history = tab.history.slice(0, tab.historyIndex + 1);
+          tab.history.push(url);
+          tab.historyIndex = tab.history.length - 1;
+        }
         newtabContent.style.display = 'none';
         let settingsDiv = document.getElementById('settings-page');
         if(settingsDiv) settingsDiv.style.display = "none";
@@ -268,7 +274,7 @@
           this.backBtn.addEventListener('click', () => this.goBack());
           this.forwardBtn.addEventListener('click', () => this.goForward());
           this.reloadBtn.addEventListener('click', () => this.reload());
-          this.goBtn.addEventListener('click', () => this.navigate());
+          this.goBtn.addEventListener('click', () => ABC());
           this.newTabBtn.addEventListener('click', () => this.createTab());
           this.urlInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') this.navigate(); });
         }
@@ -312,7 +318,7 @@
             this.newtabContent.style.display = 'block';
           } else {
             this.browserFrame.style.display = 'block';
-            this.browserFrame.src = "https://asphalt-nine.vercel.app/" + __uv$config.prefix + __uv$config.encodeUrl(tab.url);
+            this.browserFrame.src = window.appConfig.baseUrl + "/" + __uv$config.prefix + __uv$config.encodeUrl(tab.url);
           }
         }
         navigate() {
@@ -427,6 +433,64 @@
         }
       }
       type();
+      function ABC() {
+        class ABC {
+          constructor(config = {}) {
+            this.type = config.type || "blank";
+            this.url = config.url || window.appConfig.baseUrl;
+          }
+          setType(type) {
+            if (!type) return;
+            this.type = type;
+          }
+          setUrl(url) {
+            if (!url) return;
+            this.url = url;
+          }
+          getCode() {
+            return `
+        <iframe style="height:100%; width: 100%; border: none; position: fixed; top: 0; right: 0; left: 0; bottom: 0; border: none"
+          sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-top-navigation allow-top-navigation-by-user-activation"
+          src="${this.url}"></iframe>`;
+          }
+          open() {
+            const iframeHTML = `
+        <iframe style="height:100%; width: 100%; border: none; position: fixed; top: 0; right: 0; left: 0; bottom: 0; border: none"
+          sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-top-navigation allow-top-navigation-by-user-activation"
+          src="${this.url}"></iframe>`;
+            const meta = `
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+      `;
+            try {
+              let page;
+              if (this.type === "blank") {
+                page = window.open();
+                page.document.title = "My Classes - Google Classroom";
+                page.document.body.style.margin = '0';
+                page.document.body.style.padding = '0';
+                page.document.body.style.overflow = 'hidden';
+                page.document.documentElement.style.margin = '0';
+                page.document.documentElement.style.padding = '0';
+                page.document.documentElement.style.overflow = 'hidden';
+                page.document.documentElement.style.height = '100%';
+                page.document.body.style.height = '100%';
+                page.document.body.innerHTML = meta + iframeHTML;
+              } else if (this.type === "blob") {
+                page = new Blob([`<html><head>${meta}</head><body>${iframeHTML}</body></html>`], { type: "text/html" });
+                window.open(URL.createObjectURL(page));
+              } else if (this.type === "overwrite") {
+                document.body.innerHTML = meta + iframeHTML;
+              }
+            } catch (error) {
+              console.error("Error opening the page:", error);
+            }
+          }
+        }
+        var tab = browser.tabs.find((t)=> t.id === browser.activeTabId);
+        const processedUrl = window.appConfig.baseUrl + "/" + __uv$config.prefix + __uv$config.encodeUrl(tab.url);
+        const abc = new ABC({ url: processedUrl, type: "blank" });
+        abc.open();
+      }
     </script>
   </body>
 </html>
