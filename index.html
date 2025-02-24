@@ -119,6 +119,7 @@
         <iframe id="browser-frame"></iframe>
       </div>
     </div>
+    <script src="config.js"></script>
     <script src="./uv/uv.bundle.js"></script>
     <script src="./uv/uv.config.js"></script>
     <script src="./assets/register-sw.js"></script>
@@ -237,7 +238,7 @@
         let historyDiv = document.getElementById('history-page');
         if(historyDiv) historyDiv.style.display = "none";
         browserFrame.style.display = 'block';
-        const processedUrl = "https://asphalt-nine.vercel.app/" + __uv$config.prefix + __uv$config.encodeUrl(url);
+        const processedUrl = window.appConfig.baseUrl + "/" + __uv$config.prefix + __uv$config.encodeUrl(url);
         browserFrame.src = processedUrl;
         urlInput.value = url;
         document.documentElement.style.overflow = 'auto';
