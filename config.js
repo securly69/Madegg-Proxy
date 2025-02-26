@@ -1,4 +1,4 @@
 // config.js
 window.appConfig = {
-  baseUrl: "https://madegg.vercel.app"
+  baseUrl: "https://madegg-proxy-production.up.railway.app"
 };
