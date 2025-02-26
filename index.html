@@ -25,7 +25,7 @@
       #url-bar { flex: 1; display: flex; gap: 9px; align-items: center; justify-content: flex-start; font-weight: 500; width: 100%; }
       #url-input { flex: 1; padding: 9px 17px; border: 1px solid #ddd; border-radius: 25px; outline: none; font-size: 14px; font-family: 'IBM Plex Sans', sans-serif; text-align: center; font-weight: 500; }
       #content-container { flex: 1; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-      #newtab-content { width: 100%; height: 100%; background: url('https://cdn.dribbble.com/users/234525/screenshots/5853076/eggsacrosstheuniverse.jpg') no-repeat center center; background-size: cover; color: white; overflow: hidden; transform: none; transform-origin: center; transition: transform 0.3s ease; border: none; }
+      #newtab-content { width: 100%; height: 100%; background: url('https://cdn.dribbble.com/users/234525/screenshots/5853076/eggsacrosstheuniverse.jpg') no-repeat center center; background-size: cover; color: white; overflow: hidden; transition: transform 0.3s ease; }
       #browserContainer { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
       #content { display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%; max-width: 800px; }
       h1, .time-date, .bookmark span, .add-bookmark { font-family: 'Futura', sans-serif; }
@@ -40,8 +40,8 @@
       .input { font-family: "Futura", sans-serif; width: 85%; padding: 15px; border: none; border-radius: 15px; font-size: 0.93rem; backdrop-filter: blur(10px) !important; background: rgba(255, 255, 255, 0.2); color: white; box-shadow: 0 3px 13px rgba(0, 0, 0, 0.3); transition: background 0.3s ease, box-shadow 0.3s ease; }
       .input::placeholder { color: rgba(255, 255, 255, 0.7); font-family: "Futura", sans-serif; }
       .input:hover { background: rgba(255, 255, 255, 0.3); box-shadow: 0 3px 13px rgba(0, 0, 0, 0.4); }
-      .bookmark, .add-bookmark { margin-bottom: 2px; display: flex; flex-direction: column; align-items: center; padding: 13px; border-radius: 17px; font-size: 10px; width: 85px; height: 85px; background: rgba(255, 255, 255, 0.2); box-shadow: 0 3px 13px rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px) !important; transition: transform 0.3s ease, background 0.3s ease; }
-      .bookmark { text-decoration: none; color: white; backdrop-filter: blur(10px) !important; }
+      .bookmark, .add-bookmark { margin-bottom: 2px; display: flex; flex-direction: column; align-items: center; padding: 13px; border-radius: 17px; font-size: 10px; width: 85px; height: 85px; background: rgba(255, 255, 255, 0.2); box-shadow: 0 3px 13px rgba(0, 0, 0, 0.3); transition: transform 0.3s ease, background 0.3s ease; }
+      .bookmark { text-decoration: none; color: white; }
       .bookmark img { margin: auto; height: 30px; width: auto; transition: transform 0.3s ease; }
       .bookmark span { font-size: 10px; margin: auto; }
       .bookmark:hover, .add-bookmark:hover { transform: scale(1.07); background: rgba(255, 255, 255, 0.3); }
@@ -123,15 +123,15 @@
       </div>
     </div>
 
-    <!-- All script tags use the defer attribute -->
     <script src="config.js" defer></script>
     <script src="uv/uv.bundle.js" defer></script>
     <script src="uv/uv.config.js" defer></script>
     <script src="assets/register-sw.js" defer></script>
     <script src="assets/script.js" defer></script>
-    <!-- Wrap inline code to ensure it runs after everything is loaded -->
+
     <script defer>
       window.addEventListener('load', function() {
+        // Update time/date display
         function updateTimeDate() {
           const date = new Date();
           const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
@@ -140,7 +140,7 @@
         setInterval(updateTimeDate, 1000);
         updateTimeDate();
 
-        // Expose functions globally if needed by your inline event handlers.
+        // Global functions for internal page handling
         window.hideInternalPages = function() {
           document.getElementById('newtab-content').style.display = 'none';
           let settingsDiv = document.getElementById('settings-page');
@@ -255,6 +255,7 @@
           document.body.style.overflow = 'auto';
         };
 
+        // Browser class initialization
         class Browser {
           constructor() {
             this.tabs = [];
@@ -429,12 +430,23 @@
           let currentMessage = messages[currentMessageIndex];
           if (isDeleting) {
             rotatingText.textContent = currentMessage.substring(0, currentCharIndex--);
-            if (currentCharIndex < 0) { isDeleting = false; currentMessageIndex = (currentMessageIndex + 1) % messages.length; setTimeout(type, 500); }
-            else { setTimeout(type, typingSpeed / 2); }
+            if (currentCharIndex < 0) { 
+              isDeleting = false; 
+              currentMessageIndex = (currentMessageIndex + 1) % messages.length; 
+              setTimeout(type, 500); 
+            } else { 
+              setTimeout(type, typingSpeed / 2); 
+            }
           } else {
             rotatingText.textContent = currentMessage.substring(0, currentCharIndex++);
-            if (currentCharIndex > currentMessage.length) { setTimeout(() => { isDeleting = true; setTimeout(type, typingSpeed / 2); }, pauseBetween); }
-            else { setTimeout(type, typingSpeed); }
+            if (currentCharIndex > currentMessage.length) { 
+              setTimeout(() => { 
+                isDeleting = true; 
+                setTimeout(type, typingSpeed / 2); 
+              }, pauseBetween); 
+            } else { 
+              setTimeout(type, typingSpeed); 
+            }
           }
         }
         type();
