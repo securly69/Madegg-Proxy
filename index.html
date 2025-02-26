@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <base href="https://madegg.vercel.app/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MadEgg Browser</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Futura&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Futura&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
     <style>
       .bookmark, .add-bookmark { backdrop-filter: blur(10px) !important; }
       html { overflow: hidden; }
@@ -119,314 +122,323 @@
         <iframe id="browser-frame"></iframe>
       </div>
     </div>
-    <script src="config.js"></script>
-    <script src="./uv/uv.bundle.js"></script>
-    <script src="./uv/uv.config.js"></script>
-    <script src="./assets/register-sw.js"></script>
-    <script src="./assets/script.js"></script>
-    <script>
-      function updateTimeDate() {
-        const date = new Date();
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-        document.getElementById('time-date').textContent = date.toLocaleDateString('en-US', options).replace(' at', ',');
-      }
-      setInterval(updateTimeDate, 1000);
-      updateTimeDate();
-      function hideInternalPages() {
-        document.getElementById('newtab-content').style.display = 'none';
-        let settingsDiv = document.getElementById('settings-page');
-        if (settingsDiv) settingsDiv.style.display = 'none';
-        let errorDiv = document.getElementById('error-page');
-        if (errorDiv) errorDiv.style.display = 'none';
-        let historyDiv = document.getElementById('history-page');
-        if (historyDiv) historyDiv.style.display = 'none';
-      }
-      function go(url) {
-        const newtabContent = document.getElementById('newtab-content');
-        const browserFrame = document.getElementById('browser-frame');
-        const urlInput = document.getElementById('url-input');
-        hideInternalPages();
-        if(url.indexOf("madegg://") === 0) {
-          if(url === "madegg://newtab") {
-            newtabContent.style.display = 'block';
-            browserFrame.style.display = 'none';
-            urlInput.value = "madegg://newtab";
-            document.documentElement.style.overflow = 'hidden';
-            document.body.style.overflow = 'hidden';
-          } else if(url === "madegg://settings") {
-            let settingsDiv = document.getElementById('settings-page');
-            if(!settingsDiv) {
-              settingsDiv = document.createElement('div');
-              settingsDiv.id = "settings-page";
-              settingsDiv.style.width = "100%";
-              settingsDiv.style.height = "100%";
-              settingsDiv.style.display = "flex";
-              settingsDiv.style.alignItems = "center";
-              settingsDiv.style.justifyContent = "center";
-              settingsDiv.style.background = "#333";
-              settingsDiv.style.color = "white";
-              settingsDiv.innerHTML = "<h2>Settings page under construction</h2>";
-              document.getElementById('content-container').appendChild(settingsDiv);
-            }
-            settingsDiv.style.display = "flex";
-            newtabContent.style.display = 'none';
-            browserFrame.style.display = 'none';
-            urlInput.value = "madegg://settings";
-            document.documentElement.style.overflow = 'hidden';
-            document.body.style.overflow = 'hidden';
-          } else if(url === "madegg://history") {
-            let historyDiv = document.getElementById('history-page');
-            if(!historyDiv) {
-              historyDiv = document.createElement('div');
-              historyDiv.id = "history-page";
-              historyDiv.style.width = "100%";
-              historyDiv.style.height = "100%";
-              historyDiv.style.display = "flex";
-              historyDiv.style.alignItems = "center";
-              historyDiv.style.justifyContent = "center";
-              historyDiv.style.background = "#222";
-              historyDiv.style.color = "white";
-              historyDiv.innerHTML = "<h2>History Page</h2><ul id='history-list'></ul>";
-              document.getElementById('content-container').appendChild(historyDiv);
-            }
-            let historyList = document.getElementById('history-list');
-            historyList.innerHTML = "";
-            let currentTab = browser.tabs.find((t)=> t.id === browser.activeTabId);
-            currentTab.history.forEach(function(item) {
-              historyList.innerHTML += "<li style='margin:10px;cursor:pointer;' onclick='go(\""+ item +"\")'>"+ item +"</li>";
-            });
-            historyDiv.style.display = "flex";
-            urlInput.value = "madegg://history";
-            document.documentElement.style.overflow = 'hidden';
-            document.body.style.overflow = 'hidden';
-          } else {
-            let errorDiv = document.getElementById('error-page');
-            if(!errorDiv) {
-              errorDiv = document.createElement('div');
-              errorDiv.id = "error-page";
-              errorDiv.style.width = "100%";
-              errorDiv.style.height = "100%";
-              errorDiv.style.display = "flex";
-              errorDiv.style.alignItems = "center";
-              errorDiv.style.justifyContent = "center";
-              errorDiv.style.background = "#900";
-              errorDiv.style.color = "white";
-              errorDiv.innerHTML = "<h2>Error: Page not found</h2>";
-              document.getElementById('content-container').appendChild(errorDiv);
-            }
-            errorDiv.style.display = "flex";
-            newtabContent.style.display = 'none';
-            browserFrame.style.display = 'none';
-            urlInput.value = url;
-            document.documentElement.style.overflow = 'hidden';
-            document.body.style.overflow = 'hidden';
-          }
-          return;
+
+    <!-- All script tags use the defer attribute -->
+    <script src="config.js" defer></script>
+    <script src="uv/uv.bundle.js" defer></script>
+    <script src="uv/uv.config.js" defer></script>
+    <script src="assets/register-sw.js" defer></script>
+    <script src="assets/script.js" defer></script>
+    <!-- Wrap inline code to ensure it runs after everything is loaded -->
+    <script defer>
+      window.addEventListener('load', function() {
+        function updateTimeDate() {
+          const date = new Date();
+          const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+          document.getElementById('time-date').textContent = date.toLocaleDateString('en-US', options).replace(' at', ',');
         }
-        if (!/^https?:\/\//i.test(url)) {
-          if(url.indexOf(" ") !== -1 || !url.includes(".")) {
-            url = "https://www.google.com/search?q=" + encodeURIComponent(url);
-          } else {
-            url = "https://" + url;
-          }
-        }
-        newtabContent.style.display = 'none';
-        let settingsDiv = document.getElementById('settings-page');
-        if(settingsDiv) settingsDiv.style.display = "none";
-        let errorDiv = document.getElementById('error-page');
-        if(errorDiv) errorDiv.style.display = "none";
-        let historyDiv = document.getElementById('history-page');
-        if(historyDiv) historyDiv.style.display = "none";
-        browserFrame.style.display = 'block';
-        const processedUrl = window.appConfig.baseUrl + "/" + __uv$config.prefix + __uv$config.encodeUrl(url);
-        browserFrame.src = processedUrl;
-        urlInput.value = url;
-        document.documentElement.style.overflow = 'auto';
-        document.body.style.overflow = 'auto';
-      }
-      class Browser {
-        constructor() {
-          this.tabs = [];
-          this.activeTabId = null;
-          this.initElements();
-          this.bindEvents();
-          this.createTab();
-        }
-        initElements() {
-          this.tabsContainer = document.getElementById('tabs-container');
-          this.contentContainer = document.getElementById('content-container');
-          this.urlInput = document.getElementById('url-input');
-          this.backBtn = document.getElementById('back');
-          this.forwardBtn = document.getElementById('forward');
-          this.reloadBtn = document.getElementById('reload');
-          this.goBtn = document.getElementById('go');
-          this.newTabBtn = document.getElementById('new-tab');
-          this.newtabContent = document.getElementById('newtab-content');
-          this.browserFrame = document.getElementById('browser-frame');
-        }
-        bindEvents() {
-          this.backBtn.addEventListener('click', () => this.goBack());
-          this.forwardBtn.addEventListener('click', () => this.goForward());
-          this.reloadBtn.addEventListener('click', () => this.reload());
-          this.goBtn.addEventListener('click', () => this.navigate());
-          this.newTabBtn.addEventListener('click', () => this.createTab());
-          this.urlInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') this.navigate(); });
-        }
-        createTab() {
-          const tabId = Date.now();
-          this.tabs.push({ id: tabId, url: 'madegg://newtab', history: ['madegg://newtab'], historyIndex: 0 });
-          this.renderTabs();
-          this.setActiveTab(tabId);
-        }
-        setActiveTab(tabId) {
-          this.activeTabId = tabId;
-          const tab = this.tabs.find((t) => t.id === tabId);
-          this.urlInput.value = tab.url;
-          this.renderTabs();
-          this.renderContent(tab);
-        }
-        renderTabs() {
-          this.tabsContainer.innerHTML = this.tabs.map((tab) =>
-            '<div class="tab ' + (tab.id === this.activeTabId ? 'active' : '') + '" data-tab-id="' + tab.id + '">' +
-            (tab.url === 'madegg://newtab' ? 'New Tab' : tab.url) +
-            '<span class="close-tab" onclick="browser.closeTab(' + tab.id + ')"><i class="fas fa-times"></i></span></div>'
-          ).join('');
-          document.querySelectorAll('.tab').forEach((tabEl) => {
-            tabEl.addEventListener('click', (e) => {
-              if (!e.target.classList.contains('close-tab')) {
-                this.setActiveTab(parseInt(tabEl.dataset.tabId));
-              }
-            });
-          });
-        }
-        renderContent(tab) {
-          this.browserFrame.style.display = 'none';
-          this.newtabContent.style.display = 'none';
+        setInterval(updateTimeDate, 1000);
+        updateTimeDate();
+
+        // Expose functions globally if needed by your inline event handlers.
+        window.hideInternalPages = function() {
+          document.getElementById('newtab-content').style.display = 'none';
           let settingsDiv = document.getElementById('settings-page');
-          if(settingsDiv) settingsDiv.style.display = 'none';
+          if (settingsDiv) settingsDiv.style.display = 'none';
           let errorDiv = document.getElementById('error-page');
-          if(errorDiv) errorDiv.style.display = 'none';
+          if (errorDiv) errorDiv.style.display = 'none';
           let historyDiv = document.getElementById('history-page');
-          if(historyDiv) historyDiv.style.display = 'none';
-          if (tab.url === 'madegg://newtab') {
-            this.newtabContent.style.display = 'block';
-          } else {
-            this.browserFrame.style.display = 'block';
-            this.browserFrame.src = "https://asphalt-nine.vercel.app/" + __uv$config.prefix + __uv$config.encodeUrl(tab.url);
-          }
-        }
-        navigate() {
-          const input = this.urlInput.value.trim();
-          let finalUrl = input;
-          if (input === 'madegg://newtab') {
-            finalUrl = input;
-          } else {
-            try {
-              new URL(input);
-            } catch (_) {
-              if(input.indexOf(" ") !== -1 || !input.includes('.')) {
-                finalUrl = "https://www.google.com/search?q=" + encodeURIComponent(input);
-              } else {
-                finalUrl = "https://" + input;
+          if (historyDiv) historyDiv.style.display = 'none';
+        };
+
+        window.go = function(url) {
+          const newtabContent = document.getElementById('newtab-content');
+          const browserFrame = document.getElementById('browser-frame');
+          const urlInput = document.getElementById('url-input');
+          hideInternalPages();
+          if(url.indexOf("madegg://") === 0) {
+            if(url === "madegg://newtab") {
+              newtabContent.style.display = 'block';
+              browserFrame.style.display = 'none';
+              urlInput.value = "madegg://newtab";
+              document.documentElement.style.overflow = 'hidden';
+              document.body.style.overflow = 'hidden';
+            } else if(url === "madegg://settings") {
+              let settingsDiv = document.getElementById('settings-page');
+              if(!settingsDiv) {
+                settingsDiv = document.createElement('div');
+                settingsDiv.id = "settings-page";
+                settingsDiv.style.width = "100%";
+                settingsDiv.style.height = "100%";
+                settingsDiv.style.display = "flex";
+                settingsDiv.style.alignItems = "center";
+                settingsDiv.style.justifyContent = "center";
+                settingsDiv.style.background = "#333";
+                settingsDiv.style.color = "white";
+                settingsDiv.innerHTML = "<h2>Settings page under construction</h2>";
+                document.getElementById('content-container').appendChild(settingsDiv);
               }
+              settingsDiv.style.display = "flex";
+              newtabContent.style.display = 'none';
+              browserFrame.style.display = 'none';
+              urlInput.value = "madegg://settings";
+              document.documentElement.style.overflow = 'hidden';
+              document.body.style.overflow = 'hidden';
+            } else if(url === "madegg://history") {
+              let historyDiv = document.getElementById('history-page');
+              if(!historyDiv) {
+                historyDiv = document.createElement('div');
+                historyDiv.id = "history-page";
+                historyDiv.style.width = "100%";
+                historyDiv.style.height = "100%";
+                historyDiv.style.display = "flex";
+                historyDiv.style.alignItems = "center";
+                historyDiv.style.justifyContent = "center";
+                historyDiv.style.background = "#222";
+                historyDiv.style.color = "white";
+                historyDiv.innerHTML = "<h2>History Page</h2><ul id='history-list'></ul>";
+                document.getElementById('content-container').appendChild(historyDiv);
+              }
+              let historyList = document.getElementById('history-list');
+              historyList.innerHTML = "";
+              let currentTab = browser.tabs.find((t)=> t.id === browser.activeTabId);
+              currentTab.history.forEach(function(item) {
+                historyList.innerHTML += "<li style='margin:10px;cursor:pointer;' onclick='go(\""+ item +"\")'>"+ item +"</li>";
+              });
+              historyDiv.style.display = "flex";
+              urlInput.value = "madegg://history";
+              document.documentElement.style.overflow = 'hidden';
+              document.body.style.overflow = 'hidden';
+            } else {
+              let errorDiv = document.getElementById('error-page');
+              if(!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.id = "error-page";
+                errorDiv.style.width = "100%";
+                errorDiv.style.height = "100%";
+                errorDiv.style.display = "flex";
+                errorDiv.style.alignItems = "center";
+                errorDiv.style.justifyContent = "center";
+                errorDiv.style.background = "#900";
+                errorDiv.style.color = "white";
+                errorDiv.innerHTML = "<h2>Error: Page not found</h2>";
+                document.getElementById('content-container').appendChild(errorDiv);
+              }
+              errorDiv.style.display = "flex";
+              newtabContent.style.display = 'none';
+              browserFrame.style.display = 'none';
+              urlInput.value = url;
+              document.documentElement.style.overflow = 'hidden';
+              document.body.style.overflow = 'hidden';
+            }
+            return;
+          }
+          if (!/^https?:\/\//i.test(url)) {
+            if(url.indexOf(" ") !== -1 || !url.includes(".")) {
+              url = "https://www.google.com/search?q=" + encodeURIComponent(url);
+            } else {
+              url = "https://" + url;
             }
           }
-          if(finalUrl.indexOf("madegg://") !== 0) {
+          newtabContent.style.display = 'none';
+          let settingsDiv = document.getElementById('settings-page');
+          if(settingsDiv) settingsDiv.style.display = "none";
+          let errorDiv = document.getElementById('error-page');
+          if(errorDiv) errorDiv.style.display = "none";
+          let historyDiv = document.getElementById('history-page');
+          if(historyDiv) historyDiv.style.display = "none";
+          browserFrame.style.display = 'block';
+          const processedUrl = window.appConfig.baseUrl + "/" + __uv$config.prefix + __uv$config.encodeUrl(url);
+          browserFrame.src = processedUrl;
+          urlInput.value = url;
+          document.documentElement.style.overflow = 'auto';
+          document.body.style.overflow = 'auto';
+        };
+
+        class Browser {
+          constructor() {
+            this.tabs = [];
+            this.activeTabId = null;
+            this.initElements();
+            this.bindEvents();
+            this.createTab();
+          }
+          initElements() {
+            this.tabsContainer = document.getElementById('tabs-container');
+            this.contentContainer = document.getElementById('content-container');
+            this.urlInput = document.getElementById('url-input');
+            this.backBtn = document.getElementById('back');
+            this.forwardBtn = document.getElementById('forward');
+            this.reloadBtn = document.getElementById('reload');
+            this.goBtn = document.getElementById('go');
+            this.newTabBtn = document.getElementById('new-tab');
+            this.newtabContent = document.getElementById('newtab-content');
+            this.browserFrame = document.getElementById('browser-frame');
+          }
+          bindEvents() {
+            this.backBtn.addEventListener('click', () => this.goBack());
+            this.forwardBtn.addEventListener('click', () => this.goForward());
+            this.reloadBtn.addEventListener('click', () => this.reload());
+            this.goBtn.addEventListener('click', () => this.navigate());
+            this.newTabBtn.addEventListener('click', () => this.createTab());
+            this.urlInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') this.navigate(); });
+          }
+          createTab() {
+            const tabId = Date.now();
+            this.tabs.push({ id: tabId, url: 'madegg://newtab', history: ['madegg://newtab'], historyIndex: 0 });
+            this.renderTabs();
+            this.setActiveTab(tabId);
+          }
+          setActiveTab(tabId) {
+            this.activeTabId = tabId;
+            const tab = this.tabs.find((t) => t.id === tabId);
+            this.urlInput.value = tab.url;
+            this.renderTabs();
+            this.renderContent(tab);
+          }
+          renderTabs() {
+            this.tabsContainer.innerHTML = this.tabs.map((tab) =>
+              '<div class="tab ' + (tab.id === this.activeTabId ? 'active' : '') + '" data-tab-id="' + tab.id + '">' +
+              (tab.url === 'madegg://newtab' ? 'New Tab' : tab.url) +
+              '<span class="close-tab" onclick="browser.closeTab(' + tab.id + ')"><i class="fas fa-times"></i></span></div>'
+            ).join('');
+            document.querySelectorAll('.tab').forEach((tabEl) => {
+              tabEl.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('close-tab')) {
+                  this.setActiveTab(parseInt(tabEl.dataset.tabId));
+                }
+              });
+            });
+          }
+          renderContent(tab) {
+            this.browserFrame.style.display = 'none';
+            this.newtabContent.style.display = 'none';
+            let settingsDiv = document.getElementById('settings-page');
+            if(settingsDiv) settingsDiv.style.display = 'none';
+            let errorDiv = document.getElementById('error-page');
+            if(errorDiv) errorDiv.style.display = 'none';
+            let historyDiv = document.getElementById('history-page');
+            if(historyDiv) historyDiv.style.display = 'none';
+            if (tab.url === 'madegg://newtab') {
+              this.newtabContent.style.display = 'block';
+            } else {
+              this.browserFrame.style.display = 'block';
+              this.browserFrame.src = "https://asphalt-nine.vercel.app/" + __uv$config.prefix + __uv$config.encodeUrl(tab.url);
+            }
+          }
+          navigate() {
+            const input = this.urlInput.value.trim();
+            let finalUrl = input;
+            if (input === 'madegg://newtab') {
+              finalUrl = input;
+            } else {
+              try {
+                new URL(input);
+              } catch (_) {
+                if(input.indexOf(" ") !== -1 || !input.includes('.')) {
+                  finalUrl = "https://www.google.com/search?q=" + encodeURIComponent(input);
+                } else {
+                  finalUrl = "https://" + input;
+                }
+              }
+            }
+            if(finalUrl.indexOf("madegg://") !== 0) {
+              const tab = this.tabs.find((t) => t.id === this.activeTabId);
+              tab.history = tab.history.slice(0, tab.historyIndex + 1);
+              tab.history.push(finalUrl);
+              tab.historyIndex = tab.history.length - 1;
+            }
+            go(finalUrl);
+          }
+          goBack() {
             const tab = this.tabs.find((t) => t.id === this.activeTabId);
-            tab.history = tab.history.slice(0, tab.historyIndex + 1);
-            tab.history.push(finalUrl);
-            tab.historyIndex = tab.history.length - 1;
+            if (tab.historyIndex > 0) {
+              tab.historyIndex--;
+              const url = tab.history[tab.historyIndex];
+              this.urlInput.value = url;
+              go(url);
+            }
           }
-          go(finalUrl);
-        }
-        goBack() {
-          const tab = this.tabs.find((t) => t.id === this.activeTabId);
-          if (tab.historyIndex > 0) {
-            tab.historyIndex--;
-            const url = tab.history[tab.historyIndex];
-            this.urlInput.value = url;
-            go(url);
+          goForward() {
+            const tab = this.tabs.find((t) => t.id === this.activeTabId);
+            if (tab.historyIndex < tab.history.length - 1) {
+              tab.historyIndex++;
+              const url = tab.history[tab.historyIndex];
+              this.urlInput.value = url;
+              go(url);
+            }
+          }
+          reload() {
+            const tab = this.tabs.find((t) => t.id === this.activeTabId);
+            if (tab) this.renderContent(tab);
+          }
+          closeTab(tabId) {
+            this.tabs = this.tabs.filter((t) => t.id !== tabId);
+            this.renderTabs();
+            if (this.tabs.length === 0) this.createTab();
           }
         }
-        goForward() {
-          const tab = this.tabs.find((t) => t.id === this.activeTabId);
-          if (tab.historyIndex < tab.history.length - 1) {
-            tab.historyIndex++;
-            const url = tab.history[tab.historyIndex];
-            this.urlInput.value = url;
-            go(url);
+        window.browser = new Browser();
+        document.getElementById('searchInputNewtab').addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            const input = e.target.value.trim();
+            document.getElementById('url-input').value = input;
+            go(input);
+          }
+        });
+        const addBookmarkButton = document.getElementById('add-bookmark');
+        const addBookmarkModal = document.getElementById('add-bookmark-modal');
+        const saveBookmarkButton = document.getElementById('save-bookmark');
+        const bookmarksContainer = document.getElementById('bookmarks');
+        addBookmarkButton.addEventListener('click', () => { addBookmarkModal.style.display = 'flex'; });
+        saveBookmarkButton.addEventListener('click', () => {
+          const name = document.getElementById('bookmark-name').value;
+          const url = document.getElementById('bookmark-url').value;
+          if (name && url) {
+            const link = document.createElement('a');
+            link.href = '#';
+            link.className = 'bookmark';
+            const img = document.createElement('img');
+            img.src = "https://www.google.com/s2/favicons?sz=64&domain_url=" + encodeURIComponent(url);
+            img.alt = name;
+            link.appendChild(img);
+            const span = document.createElement('span');
+            span.textContent = name;
+            link.appendChild(span);
+            link.addEventListener('click', () => { go(url); });
+            bookmarksContainer.insertBefore(link, addBookmarkButton);
+            addBookmarkModal.style.display = 'none';
+          }
+        });
+        const rotatingText = document.getElementById('rotating-text');
+        const messages = [
+          "Your phone's at 1%. Find a charger ASAP.",
+          "Still waiting for a reply? Classic.",
+          "Check your phone again. Yep, still no new texts.",
+          "You texted them, they didn't reply. Story of our lives.",
+          "Refresh again. It’s not gonna change, but okay.",
+          "How is it that we only notice how tired we are once we sit down?"
+        ];
+        let currentMessageIndex = 0;
+        let currentCharIndex = 0;
+        let isDeleting = false;
+        const typingSpeed = 100;
+        const pauseBetween = 2000;
+        function type() {
+          let currentMessage = messages[currentMessageIndex];
+          if (isDeleting) {
+            rotatingText.textContent = currentMessage.substring(0, currentCharIndex--);
+            if (currentCharIndex < 0) { isDeleting = false; currentMessageIndex = (currentMessageIndex + 1) % messages.length; setTimeout(type, 500); }
+            else { setTimeout(type, typingSpeed / 2); }
+          } else {
+            rotatingText.textContent = currentMessage.substring(0, currentCharIndex++);
+            if (currentCharIndex > currentMessage.length) { setTimeout(() => { isDeleting = true; setTimeout(type, typingSpeed / 2); }, pauseBetween); }
+            else { setTimeout(type, typingSpeed); }
           }
         }
-        reload() {
-          const tab = this.tabs.find((t) => t.id === this.activeTabId);
-          if (tab) this.renderContent(tab);
-        }
-        closeTab(tabId) {
-          this.tabs = this.tabs.filter((t) => t.id !== tabId);
-          this.renderTabs();
-          if (this.tabs.length === 0) this.createTab();
-        }
-      }
-      const browser = new Browser();
-      document.getElementById('searchInputNewtab').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          const input = e.target.value.trim();
-          document.getElementById('url-input').value = input;
-          go(input);
-        }
+        type();
       });
-      const addBookmarkButton = document.getElementById('add-bookmark');
-      const addBookmarkModal = document.getElementById('add-bookmark-modal');
-      const saveBookmarkButton = document.getElementById('save-bookmark');
-      const bookmarksContainer = document.getElementById('bookmarks');
-      addBookmarkButton.addEventListener('click', () => { addBookmarkModal.style.display = 'flex'; });
-      saveBookmarkButton.addEventListener('click', () => {
-        const name = document.getElementById('bookmark-name').value;
-        const url = document.getElementById('bookmark-url').value;
-        if (name && url) {
-          const link = document.createElement('a');
-          link.href = '#';
-          link.className = 'bookmark';
-          const img = document.createElement('img');
-          img.src = "https://www.google.com/s2/favicons?sz=64&domain_url=" + encodeURIComponent(url);
-          img.alt = name;
-          link.appendChild(img);
-          const span = document.createElement('span');
-          span.textContent = name;
-          link.appendChild(span);
-          link.addEventListener('click', () => { go(url); });
-          bookmarksContainer.insertBefore(link, addBookmarkButton);
-          addBookmarkModal.style.display = 'none';
-        }
-      });
-      const rotatingText = document.getElementById('rotating-text');
-      const messages = [
-        "Your phone's at 1%. Find a charger ASAP.",
-        "Still waiting for a reply? Classic.",
-        "Check your phone again. Yep, still no new texts.",
-        "You texted them, they didn't reply. Story of our lives.",
-        "Refresh again. It’s not gonna change, but okay.",
-        "How is it that we only notice how tired we are once we sit down?"
-      ];
-      let currentMessageIndex = 0;
-      let currentCharIndex = 0;
-      let isDeleting = false;
-      const typingSpeed = 100;
-      const pauseBetween = 2000;
-      function type() {
-        let currentMessage = messages[currentMessageIndex];
-        if (isDeleting) {
-          rotatingText.textContent = currentMessage.substring(0, currentCharIndex--);
-          if (currentCharIndex < 0) { isDeleting = false; currentMessageIndex = (currentMessageIndex + 1) % messages.length; setTimeout(type, 500); }
-          else { setTimeout(type, typingSpeed / 2); }
-        } else {
-          rotatingText.textContent = currentMessage.substring(0, currentCharIndex++);
-          if (currentCharIndex > currentMessage.length) { setTimeout(() => { isDeleting = true; setTimeout(type, typingSpeed / 2); }, pauseBetween); }
-          else { setTimeout(type, typingSpeed); }
-        }
-      }
-      type();
     </script>
   </body>
 </html>
