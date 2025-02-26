@@ -1,0 +1,5 @@
+name = "madegg"
+type = "javascript"
+account_id = "7ae01ddd3ee1bd653096c76601615fd1"
+workers_dev = true
+compatibility_date = "2024-02-26"
